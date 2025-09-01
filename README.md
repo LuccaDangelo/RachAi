@@ -1,6 +1,6 @@
-# Projeto Rachaí
+# Projeto RachAi
 
-Rachaí é um aplicativo desenvolvido para simplificar a divisão de despesas entre amigos, seja em viagens, contas de bar, ou qualquer outra ocasião. Este projeto documenta o processo de planejamento e prototipação da solução.
+RachAi é um aplicativo desenvolvido para simplificar a divisão de despesas entre amigos, seja em viagens, contas de bar, ou qualquer outra ocasião. Este projeto documenta o processo de planejamento e prototipação da solução.
 
 ---
 
