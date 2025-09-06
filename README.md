@@ -18,11 +18,11 @@ O projeto está sendo gerenciado utilizando a metodologia Scrum. Abaixo estão o
 
 **Backlog do Produto:**
 
-(Cole aqui o print do seu backlog do JIRA)
+![Print do Backlog](.assets/backlog.jpg)
 
 **Quadro da Sprint 1:**
 
-(Cole aqui o print do seu quadro da sprint do JIRA)
+![Print do Quadro da Sprint](.assets/quadro_sprint.jpg)
 
 ### 3. Protótipo de Baixa Fidelidade (Figma)
 
