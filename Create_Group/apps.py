@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class ForumConfig(AppConfig):
+class Create_Group(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'forum'
+    name = 'Create_Group'
