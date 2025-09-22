@@ -1,7 +1,16 @@
-<h1>Crie um Novo Grupo</h1>
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Criar Novo Grupo</title>
+</head>
+<body>
 
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Criar Grupo</button>
-</form>
+    <h1>Crie um Novo Grupo</h1>
+
+    <form method="post">
+        {% csrf_token %}  {{ form.as_p }}   <button type="submit">Criar Grupo</button>
+    </form>
+
+</body>
+</html>
