@@ -1,15 +1,19 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect
+from .models import Group
+from .forms import GroupForm
 
 # Create your views here.
-def list_groups(request):
- 
-    fake_groups_data = [
-        {'nome': 'Viagem para a Praia', 'descricao': 'Despesas do feriado.'},
-        {'nome': 'Contas do Apartamento', 'descricao': 'Aluguel, internet, luz.'},
-        {'nome': 'Jantar de Aniversário', 'descricao': 'Comemoração do Rafael.'},
-    ]
-    context = {
-        'page_title': 'Meus Grupos (Dados de Teste)',
-        'lista_de_grupos': fake_groups_data,
-    }
-    return render(request, 'Create_Group/group_list.html', context)
+def create_group(request):
+    '''View para criar um novo grupo de despesas'''
+    if request.method == 'POST':
+        form = GroupForm(request.POST)
+        if form.is_valid():
+            group = form.save()
+            '''Redireciona para a página de detalhes do grupo após a criação'''
+            return redirect('group_detail', group_id=group.id)
+    else:
+        '''Se a requisição não for POST, exibe o formulário vazio'''
+        form = GroupForm()
+
+    '''Renderiza o template 'create_group.html' passando o formulário'''
+    return render(request, 'create_group/create_group.html', {'form': form})
