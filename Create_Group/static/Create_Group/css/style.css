@@ -10,7 +10,7 @@ body {
     justify-content: center;
 }
 
-/* Container Principal */
+
 .container {
     max-width: 800px;
     width: 100%;
@@ -20,12 +20,12 @@ body {
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
 }
 
-/* Títulos */
+
 h1, h2, h3 {
     color: #444;
 }
 
-/* Links e Botões */
+
 a {
     color: #007bff;
     text-decoration: none;
