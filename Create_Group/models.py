@@ -1,4 +1,3 @@
-# Primeiro, importe o modelo User do Django
 from django.contrib.auth.models import User
 from django.db import models
 

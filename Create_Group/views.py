@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from .forms import GroupForm
+
 # Create your views here.
 def create_group(request):
     form = GroupForm()
