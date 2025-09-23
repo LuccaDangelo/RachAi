@@ -1,52 +1,228 @@
-/* Estilos Gerais */
-body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    background-color: #f4f4f9;
-    color: #333;
-    line-height: 1.6;
-    margin: 0;
-    padding: 20px;
-    display: flex;
-    justify-content: center;
+/* ===========================
+   RachAí – base visual
+   =========================== */
+
+:root{
+  --bg: #f5f7fb;
+  --card: #ffffff;
+  --ink: #111827;
+  --muted: #6b7280;
+  --primary: #184d6b;      /* barra/topo */
+  --accent: #2f80ed;       /* botões primários */
+  --accent-hover: #1f6fe0;
+  --ring: rgba(47,128,237,.25);
+  --radius: 12px;
+  --shadow: 0 10px 30px rgba(0,0,0,.06);
 }
 
-
-.container {
-    max-width: 800px;
-    width: 100%;
-    background: #fff;
-    padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+*{ box-sizing: border-box; }
+html,body{
+  height: 100%;
+  background: var(--bg);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+body{
+  margin: 0;
+  font: 500 16px/1.5 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
 }
 
+/* ===========================
+   Topbar (funciona mesmo se for só um link no topo)
+   =========================== */
 
-h1, h2, h3 {
-    color: #444;
+.topbar{
+  width: 100%;
+  background: var(--primary);
+  color: #fff;
+  padding: 16px 24px;
+  font-weight: 700;
+  letter-spacing: .3px;
+}
+.topbar a{
+  color: #fff;
+  text-decoration: none;
 }
 
+/* se a página tiver apenas links soltos no topo (ex.: "RachAí  Entrar  Registrar"),
+   deixamos um estilo mínimo agradável mesmo sem mudar o HTML */
+body > a:first-of-type{
+  display: inline-block;
+  background: var(--primary);
+  color: #fff !important;
+  text-decoration: none;
+  margin: 0;
+  padding: 14px 22px;
+  width: 100%;
+  font-weight: 700;
+}
+body > a:nth-of-type(n+2){
+  position: relative;
+  top: -44px;              /* “encaixa” os links à direita do topo */
+  float: right;
+  margin: 10px 12px 0 0;
+  color: #e8eef7;
+}
+body > a:nth-of-type(n+2):hover{ color: #ffffff; }
 
-a {
-    color: #007bff;
-    text-decoration: none;
+/* ===========================
+   Layout / Conteúdo
+   =========================== */
+
+.container{
+  max-width: 1100px;
+  margin: 32px auto;
+  padding: 0 20px;
 }
 
-a:hover {
-    text-decoration: underline;
+.card{
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 28px;
 }
 
-.button, button[type="submit"] {
-    display: inline-block;
-    background-color: #007bff;
-    color: #fff;
-    padding: 10px 15px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    text-align: center;
+/* Utilitários */
+.mt-0{ margin-top: 0!important; }
+.mb-0{ margin-bottom: 0!important; }
+.mt-24{ margin-top: 24px!important; }
+.center{ text-align: center; }
+
+/* Títulos */
+h1,h2,h3{
+  margin: 0 0 14px;
+  line-height: 1.2;
+}
+h1{ font-size: 28px; }
+h2{ font-size: 22px; color: var(--ink); }
+p.lead{ color: var(--muted); margin: 6px 0 20px; }
+
+/* ===========================
+   Sidebar + área principal (usado na lista de grupos)
+   =========================== */
+
+.layout{
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 20px;
+}
+.sidebar{
+  background: #ffffff;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 18px;
+  height: fit-content;
+}
+.sidebar h3{
+  margin: 0 0 12px;
+  font-size: 18px;
+}
+.panel{
+  background: #ffffff;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 24px;
+  min-height: 520px;
 }
 
-.button:hover, button[type="submit"]:hover {
-    background-color: #0056b3;
+/* Botões */
+.button, button[type="submit"], input[type="submit"]{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: var(--accent);
+  color: #fff;
+  border: 0;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform .04s ease, background .2s ease, box-shadow .2s ease;
+  box-shadow: 0 6px 16px rgba(47,128,237,.24);
+}
+.button:hover,
+button[type="submit"]:hover,
+input[type="submit"]:hover{
+  background: var(--accent-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(47,128,237,.28);
+}
+.button:disabled,
+input[type="submit"]:disabled{
+  opacity: .5;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.button--ghost{
+  background: #eef3fb;
+  color: var(--accent);
+  box-shadow: none;
+}
+.button--ghost:hover{
+  background: #e3ecfb;
+}
+
+/* Links */
+a{ color: var(--accent); text-decoration: none; }
+a:hover{ text-decoration: underline; }
+
+/* ===========================
+   Formulários (Criar Novo Grupo)
+   =========================== */
+
+form label{
+  display: block;
+  font-weight: 600;
+  margin: 12px 0 6px;
+}
+
+input[type="text"], input[type="email"], input[type="password"], textarea, select{
+  display: block;
+  width: 100%;
+  max-width: 520px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  color: var(--ink);
+  padding: 12px 14px;
+  border-radius: 10px;
+  outline: none;
+  transition: box-shadow .2s ease, border-color .2s ease;
+}
+input::placeholder, textarea::placeholder{ color: #9aa3af; }
+
+input:focus, textarea:focus, select:focus{
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px var(--ring);
+}
+
+.form-actions{
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+/* mensagens/estados */
+.empty-state{
+  background: #f2f6fc;
+  border: 1px dashed #d7e3f7;
+  color: #374151;
+  border-radius: 16px;
+  padding: 32px;
+  max-width: 520px;
+  margin: 40px auto;
+  text-align: center;
+  font-weight: 700;
+}
+
+/* ===========================
+   Responsivo
+   =========================== */
+@media (max-width: 900px){
+  .layout{ grid-template-columns: 1fr; }
+  .panel{ min-height: 320px; }
+  body > a:nth-of-type(n+2){ top: 0; float: none; margin: 0 8px; }
 }

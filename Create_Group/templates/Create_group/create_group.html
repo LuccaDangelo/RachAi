@@ -2,68 +2,38 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Criar Novo Grupo - RachAi</title>
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <title>Criar Novo Grupo - RachAí</title>
+  <link rel="stylesheet" href="{% static 'Create_Group/css/style.css' %}">
 </head>
 <body>
 
-    <header class="navbar">
-        <div class="navbar-brand">
-            <a href="/">RachAi</a>
-        </div>
-        
-        <div class="navbar-user">
-            {% if user.is_authenticated %}
-                <span>Olá, {{ user.first_name|default:user.username }}</span>
-                <a href="{% url 'logout' %}">Sair</a>
-            {% else %}
-                <a href="{% url 'login' %}">Entrar</a>
-                <a href="#">Registrar</a>
-            {% endif %}
-        </div>
-    </header>
+  <div class="topbar">RachAí</div>
 
-    <main class="main-container">
-        <div class="page-header">
-            <h2>Criar Novo Grupo</h2>
-            <p>Defina um nome para começar</p>
+  <div class="container">
+    <div class="card">
+      <h1 class="mt-0">Criar Novo Grupo</h1>
+      <p class="lead">Defina um nome para começar</p>
+
+      <form method="post">
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+          <p class="error">{{ form.non_field_errors }}</p>
+        {% endif %}
+
+        <label for="{{ form.name.id_for_label }}">Nome do Grupo</label>
+        {{ form.name }}
+
+        <div class="form-actions">
+          <input type="submit" value="Salvar">
+          <a class="button button--ghost" href="{% url 'home' %}">Cancelar</a>
         </div>
+      </form>
 
-        <div class="card">
-            <form method="post" novalidate>
-                {% csrf_token %}
-                
-                <div class="form-group">
-                    <label for="{{ form.name.id_for_label }}">Nome do Grupo</label>
-                    
-                    {{ form.name }}
-                    
-                    {% if form.name.errors %}
-                        <div class="error-message">
-                            {% for error in form.name.errors %}
-                                {{ error }}
-                            {% endfor %}
-                        </div>
-                    {% endif %}
-                </div>
-
-                <div class="form-actions">
-                    <button type="submit" class="btn btn-primary">Salvar</button>
-                    <a href="#" class="btn btn-cancel">Cancelar</a>
-                </div>
-
-                <p class="form-helper-text">
-                    Preencha o nome do grupo para habilitar "Salvar".
-                </p>
-            </form>
-        </div>
-    </main>
+      <p class="mt-24 muted">Preencha o nome do grupo para habilitar “Salvar”.</p>
+    </div>
+  </div>
 
 </body>
 </html>
