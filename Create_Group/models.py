@@ -18,7 +18,7 @@ class Participant(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='group_participations')
 
     def __str__(self):
-        # Agora podemos pegar o nome de usuário real
+    
         return f"{self.user.username} ({self.group.name})"
 
     class Meta:
