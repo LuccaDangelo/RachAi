@@ -2,21 +2,21 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ page_title }} - RachAi</title>
+    <title>Meus Grupos - RachAí</title>
 </head>
 <body>
+    <h1>Meus Grupos</h1>
 
-    <h1>{{ page_title }}</h1>
-
-    {% if lista_de_grupos %}
+    <a href="{% url 'create_group' %}">Criar Novo Grupo</a>
+    <hr>
+    
+    {% if groups %}
         <ul>
-            {% for grupo in lista_de_grupos %}
+            {% for group in groups %}
                 <li>
-                    <strong>{{ grupo.nome }}</strong>
-                    {% if grupo.descricao %}
-                        <p>{{ grupo.descricao }}</p>
-                    {% endif %}
+                    <a href="{% url 'group_detail' group.id %}">
+                        {{ group.name }}
+                    </a>
                 </li>
             {% endfor %}
         </ul>
