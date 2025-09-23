@@ -1,17 +1,16 @@
-{% load static %} <!DOCTYPE html>
+{% load static %}
+<!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <title>Meus Grupos - RachAí</title>
-    <link rel="stylesheet" href="{% static 'Create_Group/css/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'Create_Group/css/style.css' %}">
 </head>
 <body>
-
     <div class="container">
         <h1>Meus Grupos</h1>
         <a href="{% url 'create_group' %}" class="button">Criar Novo Grupo</a>
         <hr>
-        
         {% if groups %}
             <ul>
                 {% for group in groups %}
@@ -26,6 +25,5 @@
             <p>Nenhum grupo encontrado. Que tal criar o primeiro?</p>
         {% endif %}
     </div>
-
 </body>
 </html>

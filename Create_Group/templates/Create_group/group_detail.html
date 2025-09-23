@@ -1,13 +1,17 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <title>{{ group.name }} - RachAí</title>
+    <link rel="stylesheet" href="{% static 'Create_Group/css/style.css' %}">
 </head>
 <body>
-    <h1>Grupo: {{ group.name }}</h1>
-    <p><i>(Página de detalhes do grupo)</i></p>
-    <hr>
-    <a href="{% url 'home' %}">Voltar para a lista de todos os grupos</a>
+    <div class="container">
+        <h1>Grupo: {{ group.name }}</h1>
+        <p><i>(Página de detalhes do grupo)</i></p>
+        <hr>
+        <a class="button" href="{% url 'home' %}">Voltar para a lista de todos os grupos</a>
+    </div>
 </body>
 </html>
