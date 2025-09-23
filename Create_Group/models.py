@@ -1,9 +1,12 @@
+# Primeiro, importe o modelo User do Django
+from django.contrib.auth.models import User
 from django.db import models
 
-# Create your models here.
+
 class Group(models.Model):
-    """Representa um grupo de despesas."""
+
     name = models.CharField(max_length=100, unique=True, verbose_name="Nome do Grupo")
+    creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='created_groups')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -11,29 +14,28 @@ class Group(models.Model):
         return self.name
 
 class Participant(models.Model):
-    """Representa uma pessoa que faz parte de um grupo."""
+
     group = models.ForeignKey(Group, on_delete=models.CASCADE, related_name='participants')
-    name = models.CharField(max_length=100, verbose_name="Nome do Participante")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='group_participations')
 
     def __str__(self):
-        return f"{self.name} ({self.group.name})"
+        # Agora podemos pegar o nome de usuário real
+        return f"{self.user.username} ({self.group.name})"
 
     class Meta:
-        unique_together = ('group', 'name')
-        verbose_name = "Participante"
-        verbose_name_plural = "Participantes"
+        unique_together = ('group', 'user')
 
 class Expense(models.Model):
     """Representa uma despesa registrada em um grupo."""
     group = models.ForeignKey(Group, on_delete=models.CASCADE, related_name='expenses')
     description = models.CharField(max_length=255, verbose_name="Descrição da Despesa")
     amount = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Valor")
-    paid_by = models.ForeignKey(Participant, on_delete=models.CASCADE, related_name='paid_expenses')
+    paid_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='paid_expenses')
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.description} (R$ {self.amount}) em {self.group.name}"
-
+    
     class Meta:
         verbose_name = "Despesa"
         verbose_name_plural = "Despesas"
