@@ -10,7 +10,7 @@ def signup(request):
             user = form.save()
             login(request, user)
             messages.success(request, 'Cadastro realizado. Bem-vindo!')
-            return redirect('group_list') 
+            return redirect('rachais:group_list') 
     else:
         form = SignUpForm()
     return render(request, 'accounts/signup.html', {'form': form})
