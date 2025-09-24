@@ -6,12 +6,12 @@ from .forms import GroupForm
 @login_required
 def group_list(request):
     groups = Group.objects.all().order_by('-created_at')
-    return render(request, 'Create_Group/group_list.html', {'groups': groups})
+    return render(request, 'rachais/group_list.html', {'groups': groups})
 
 @login_required
 def group_detail(request, group_id):
     group = get_object_or_404(Group, pk=group_id)
-    return render(request, 'Create_Group/group_detail.html', {'group': group})
+    return render(request, 'rachais/group_detail.html', {'group': group})
 
 @login_required
 def create_group(request):
@@ -25,4 +25,4 @@ def create_group(request):
             return redirect('group_detail', group_id=new_group.id)
     else:
         form = GroupForm()
-    return render(request, 'Create_Group/create_group.html', {'form': form})
+    return render(request, 'rachais/create_group.html', {'form': form})

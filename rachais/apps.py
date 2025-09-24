@@ -1,5 +1,5 @@
 from django.apps import AppConfig
 
-class Create_Group(AppConfig):
+class rachais(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'Create_Group'
+    name = 'rachais'

@@ -1,14 +1,14 @@
 from django.contrib import admin
 from django.urls import path, include
 from django.contrib.auth import views as auth_views
-from Create_Group import views as group_views
+from rachais import views as group_views
 from accounts.views import signup 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
 
     # Grupos
-    path('groups/', include('Create_Group.urls')),
+    path('groups/', include('rachais.urls')),
 
     # Auth (views nativas)
     path('login/', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),

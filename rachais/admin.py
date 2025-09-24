@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from Create_Group.models import Expense, Group, Participant
+from rachais.models import Expense, Group, Participant
 
 # Register your models here.
 admin.site.register(Group)
