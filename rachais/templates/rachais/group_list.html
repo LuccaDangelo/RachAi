@@ -1,21 +1,16 @@
-{% extends "base.html" %}
-{% block title %}Grupos{% endblock %}
-{% block content %}
-<h1>Grupos</h1>
+<h1>Meus Grupos</h1>
 
-{% if user.is_authenticated %}
-  <p><a href="{% url 'create_group' %}">➕ Criar novo grupo</a></p>
+{% if group_list %}
+    <ul>
+        {% for group in group_list %}
+            <li>
+                <a href="{% url 'group_detail' group.id %}">{{ group.name }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+
+{% else %}
+    <p>Você ainda não participa de nenhum grupo.</p>
 {% endif %}
 
-{% for g in groups %}
-  <div class="card">
-    <h3><a href="{% url 'group_detail' g.id %}">{{ g.name }}</a></h3>
-    <p class="muted">
-      por {{ g.creator.first_name|default:g.creator.username }}
-      — {{ g.created_at|date:"d/m/Y H:i" }}
-    </p>
-  </div>
-{% empty %}
-  <p>Nenhum grupo ainda.</p>
-{% endfor %}
-{% endblock %}
+<a href="{% url 'create_group' %}">Criar Novo Grupo</a>
