@@ -4,7 +4,7 @@
     <ul>
         {% for group in group_list %}
             <li>
-                <a href="{% url 'group_detail' group.id %}">{{ group.name }}</a>
+                <a href="{% url 'rachais:group_detail' group.id %}">{{ group.name }}</a>
             </li>
         {% endfor %}
     </ul>
@@ -13,4 +13,4 @@
     <p>Você ainda não participa de nenhum grupo.</p>
 {% endif %}
 
-<a href="{% url 'create_group' %}">Criar Novo Grupo</a>
+<a href="{% url 'rachais:create_group' %}">Criar Novo Grupo</a>
