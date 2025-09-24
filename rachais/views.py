@@ -2,10 +2,12 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import Group, Participant
 from .forms import GroupForm
+
 def home(request):
     if request.user.is_authenticated:
-        return redirect('group_list')
+        return redirect('rachais:group_list')
     return render (request,'rachais/home.html')
+
 @login_required
 def group_list(request):
     groups = Group.objects.all().order_by('-created_at')
@@ -25,7 +27,7 @@ def create_group(request):
             new_group.creator = request.user
             new_group.save()
             Participant.objects.get_or_create(group=new_group, user=request.user)
-            return redirect('group_detail', group_id=new_group.id)
+            return redirect('rachais:group_detail', group_id=new_group.id)
     else:
         form = GroupForm()
     return render(request, 'rachais/create_group.html', {'form': form})
