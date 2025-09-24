@@ -12,6 +12,7 @@ urlpatterns = [
     # Auth (views nativas)
     path('login/', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(next_page='login'), name='logout'),
+    
 
     # Home -> lista de grupos (precisa bater com LOGIN_REDIRECT_URL='group_list')
     path('', group_views.group_list, name='group_list'),
