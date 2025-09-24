@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block content %}
+<div style="max-width:540px;padding-top:24px;">
+  <h1>Criar conta</h1>
+
+  {% if form.non_field_errors %}
+    <div style="color:#b00020;margin:12px 0;">
+      {% for e in form.non_field_errors %}{{ e }}<br>{% endfor %}
+    </div>
+  {% endif %}
+
+  <form method="post" novalidate>
+    {% csrf_token %}
+
+    <label for="{{ form.username.id_for_label }}">Usuário</label>
+    {{ form.username }}
+
+    <label for="{{ form.email.id_for_label }}" style="margin-top:12px;">E-mail</label>
+    {{ form.email }}
+
+    <label for="{{ form.password1.id_for_label }}" style="margin-top:12px;">Senha</label>
+    {{ form.password1 }}
+
+    <label for="{{ form.password2.id_for_label }}" style="margin-top:12px;">Confirme a senha</label>
+    {{ form.password2 }}
+
+    <button type="submit" style="margin-top:16px;width:100%;">Cadastrar</button>
+  </form>
+
+  <p style="margin-top:16px;">Já tem conta? <a href="{% url 'login' %}">Entrar</a></p>
+</div>
+{% endblock %}
