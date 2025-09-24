@@ -1,9 +1,8 @@
-from urllib import request
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import Group, Participant
 from .forms import GroupForm
-def home(rquest):
+def home(request):
     if request.user.is_authenticated:
         return redirect('group_list')
     return render (request,'rachais/home.html')
