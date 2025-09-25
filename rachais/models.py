@@ -16,7 +16,7 @@ class Participant(models.Model):
 
     group = models.ForeignKey(Group, on_delete=models.CASCADE, related_name='participants')
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='group_participations')
-
+    
     def __str__(self):
     
         return f"{self.user.username} ({self.group.name})"
