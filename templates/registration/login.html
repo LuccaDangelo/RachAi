@@ -1,11 +1,29 @@
 {% extends "base.html" %}
-{% block title %}Login{% endblock %}
+{% block title %}Entrar · RachAí{% endblock %}
 {% block content %}
-<h1>Entrar</h1>
-<form method="post">{% csrf_token %}
-  {{ form.non_field_errors }}
-  <label>Usuário ou e-mail</label>{{ form.username }}
-  <label>Senha</label>{{ form.password }}
-  <button type="submit">Entrar</button>
-</form>
+<section class="auth-wrap">
+  <div class="card auth-card">
+    <div class="auth-logo">💠 RachAí</div>
+    <h1 class="auth-title">Entrar na sua conta</h1>
+    <p class="auth-sub">Acesse seus grupos e despesas</p>
+
+    <form method="post" class="auth-form">
+      {% csrf_token %}
+      <div class="field">
+        <label for="{{ form.username.id_for_label }}">Email</label>
+        {{ form.username.as_widget|safe }}
+      </div>
+      <div class="field">
+        <label for="{{ form.password.id_for_label }}">Senha</label>
+        {{ form.password.as_widget|safe }}
+      </div>
+
+      <button type="submit" class="btn primary block">Entrar</button>
+    </form>
+
+    <div class="muted center small">Não tem conta?
+      <a href="{% url 'accounts:signup' %}" class="btn ghost xs">Cadastrar</a>
+    </div>
+  </div>
+</section>
 {% endblock %}

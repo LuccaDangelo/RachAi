@@ -72,9 +72,10 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
 ]
 
-LOGIN_URL = 'login'
-LOGIN_REDIRECT_URL = 'group_list'
-LOGOUT_REDIRECT_URL = 'login'
+# Auth redirects / urls
+LOGIN_URL = 'accounts:login'
+LOGIN_REDIRECT_URL = 'rachais:group_list'
+LOGOUT_REDIRECT_URL = 'accounts:login'
 
 LANGUAGE_CODE = 'pt-br'
 TIME_ZONE = 'America/Recife'
@@ -84,7 +85,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     BASE_DIR / 'assets',
-    ]
+]
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 

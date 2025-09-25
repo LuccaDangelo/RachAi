@@ -1,3 +1,4 @@
+{% load static %}
 <!doctype html>
 <html lang="pt-br">
 <head>
@@ -5,31 +6,28 @@
   <link rel="icon" href="{% static 'icon.ico' %}" type="image/x-icon">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>{% block title %}RachAI{% endblock %}</title>
-  <style>
-    body{font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif;margin:0;padding:0 16px 40px}
-    header{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid #eee;margin-bottom:16px}
-    a{text-decoration:none}.muted{color:#666}.card{border:1px solid #eee;border-radius:12px;padding:16px;margin:10px 0}
-    form{max-width:520px;display:flex;flex-direction:column;gap:10px}
-    input,textarea,button{padding:10px;border:1px solid #ddd;border-radius:8px}
-    button{cursor:pointer}
-  </style>
+  <link rel="stylesheet" href="{% static 'css/auth.css' %}">
 </head>
 <body>
-<header>
-  <a href="{% url 'group_list' %}"><strong>Home</strong></a>
-  <nav>
+<header class="topbar">
+  <div class="brand">
+    <div class="logo">💠</div>
+    <strong>RachAí</strong>
+  </div>
+  <nav class="top-actions">
     {% if user.is_authenticated %}
-      <span class="muted">Olá, {{ user.first_name|default:user.username }}</span>
-      <a href="{% url 'create_group' %}">Criar grupo</a>
-      <a href="{% url 'logout' %}">Sair</a>
+      <a class="link" href="{% url 'rachais:group_list' %}">Meus grupos</a>
+      <a class="btn ghost" href="{% url 'accounts:logout' %}">Sair</a>
     {% else %}
-      <a href="{% url 'login' %}">Entrar</a>
-      <a href="/register/">Cadastrar</a>
+      <a class="link" href="{% url 'accounts:signup' %}">Cadastrar</a>
+      <a class="btn ghost" href="{% url 'accounts:login' %}">Entrar</a>
     {% endif %}
   </nav>
 </header>
 
-{% for message in messages %}<div class="card">{{ message }}</div>{% endfor %}
-{% block content %}{% endblock %}
+<main class="page">
+  {% for message in messages %}<div class="msg">{{ message }}</div>{% endfor %}
+  {% block content %}{% endblock %}
+</main>
 </body>
 </html>

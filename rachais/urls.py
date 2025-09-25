@@ -1,13 +1,12 @@
 from django.urls import path
 from . import views
 
-app_name = "rachais"  # <-- namespace
+app_name = "rachais"
 
 urlpatterns = [
-    path("", views.login, name="login"),
+    path("", views.group_list, name="group_list"),
+    path("home/", views.group_list, name="home"),
     path("groups/", views.group_list, name="group_list"),
     path("groups/create/", views.create_group, name="create_group"),
     path("groups/<int:group_id>/", views.group_detail, name="group_detail"),
-    path("home/", views.home, name="home"),
-
 ]
