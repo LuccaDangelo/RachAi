@@ -8,6 +8,11 @@ def home(request):
         return redirect('rachais:group_list')
     return render (request,'rachais/home.html')
 
+def login(request):
+    if request.user.is_authenticated:
+        return redirect('rachais:group_list')
+    return render (request,'rachais/login.html')
+
 @login_required
 def group_list(request):
     groups = Group.objects.all().order_by('-created_at')
