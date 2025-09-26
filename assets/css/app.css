@@ -97,7 +97,7 @@ html,body{
 .card h3{margin:0 0 8px;font-size:15px;color:#0f172a}
 .empty{color:var(--gray-500);font-size:14px}
 
-/* Banner de sucesso/alerta */
+/* Banner base */
 .banner{
   background:var(--green);
   color:#fff;
@@ -105,7 +105,14 @@ html,body{
   padding:10px 12px;
   margin-bottom:12px;
   font-weight:600;
+  box-shadow:0 1px 0 rgba(0,0,0,.05) inset;
 }
+
+/* Banners por tipo (usados com message.tags do Django) */
+.banner-success{ background:#16a34a; color:#fff; }  /* sucesso (verde) */
+.banner-error{   background:#dc2626; color:#fff; }  /* erro (vermelho) */
+.banner-warning{ background:#d97706; color:#fff; }  /* aviso (laranja) */
+.banner-info{    background:#0ea5e9; color:#fff; }  /* informativo (azul) */
 
 /* Formulários básicos (caso usem HTML simples) */
 label{display:block;margin:8px 0 6px;font-weight:600}

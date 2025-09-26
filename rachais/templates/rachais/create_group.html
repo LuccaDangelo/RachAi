@@ -1,28 +1,26 @@
 {% extends "base.html" %}
-{% load static %}
 
 {% block content %}
-<div class="max-w-xl mx-auto p-6">
-  <h1 class="text-2xl font-semibold mb-4">Criar novo grupo</h1>
-
+<section class="content" style="max-width:640px;margin:0 auto;">
   {% if messages %}
-    <ul class="mb-4">
-      {% for message in messages %}
-        <li class="p-3 rounded border mb-2">{{ message }}</li>
-      {% endfor %}
-    </ul>
+    {% for message in messages %}
+      <div class="banner {% if message.tags %}banner-{{ message.tags }}{% endif %}">
+        {{ message }}
+      </div>
+    {% endfor %}
   {% endif %}
+
+  <h1 class="text-2xl font-semibold mb-4" style="margin-bottom:12px">Criar novo grupo</h1>
 
   <form method="post">
     {% csrf_token %}
-    <label for="name" class="block mb-2">Nome do Grupo</label>
+    <label for="name">Nome do Grupo</label>
     <input id="name" name="name" type="text" maxlength="100"
-           placeholder="Ex: Viagem para a Praia"
-           class="w-full border rounded px-3 py-2 mb-4" required>
+           placeholder="Ex: Viagem para a Praia" required>
 
-    <button type="submit" class="px-4 py-2 rounded bg-gray-800 text-white">
-      Criar
-    </button>
+    <div class="form-actions">
+      <button type="submit" class="btn">Criar</button>
+    </div>
   </form>
-</div>
+</section>
 {% endblock %}

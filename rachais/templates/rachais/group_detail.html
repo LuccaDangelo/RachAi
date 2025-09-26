@@ -12,19 +12,43 @@
   <section class="content">
     {% if messages %}
       {% for m in messages %}
-        <div class="banner">{{ m }}</div>
+        <div class="banner {% if m.tags %}banner-{{ m.tags }}{% endif %}">
+          {{ m }}
+        </div>
       {% endfor %}
     {% endif %}
 
     <h1>{{ group.name }}</h1>
     <p class="subtitle">Adicione participantes e comece a registrar despesas</p>
-    <a class="btn btn-light">+ Convidar Participantes</a>
 
+    <!-- PARTICIPANTES -->
     <div class="card" style="margin-top:16px">
       <h3>Participantes</h3>
-      <p class="empty">Nenhum participante ainda</p>
+
+      <!-- Form: username OU e-mail -->
+      <form method="post" action="{% url 'rachais:add_participant' group.id %}" style="margin:8px 0 12px">
+        {% csrf_token %}
+        <label for="identifier">Username ou e-mail</label>
+        <input id="identifier" name="identifier" type="text" placeholder="ex.: joao ou joao@email.com" required>
+        <div class="form-actions">
+          <button class="btn btn-light" type="submit">+ Convidar Participante</button>
+        </div>
+      </form>
+
+      {% with plist=group.participants.all %}
+        {% if plist %}
+          <ul style="list-style:none;padding:0;margin:8px 0 0;display:flex;flex-wrap:wrap;gap:8px">
+            {% for p in plist %}
+              <li class="group-item" style="display:inline-block;margin:0">{{ p.user.username }}</li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p class="empty">Nenhum participante ainda</p>
+        {% endif %}
+      {% endwith %}
     </div>
 
+    <!-- DESPESAS -->
     <div class="card">
       <h3>Despesas</h3>
       <p class="empty">Nenhuma despesa adicionada</p>
