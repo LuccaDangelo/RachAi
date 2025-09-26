@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="layout">
+  <aside class="sidebar">
+    <h2>{{ group.name }}</h2>
+    <a href="{% url 'rachais:group_detail' group.id %}" class="btn btn-block">← Voltar ao Grupo</a>
+  </aside>
+
+  <section class="content">
+    {% if messages %}
+      {% for m in messages %}
+        <div class="banner {% if m.tags %}banner-{{ m.tags }}{% endif %}">
+          {{ m }}
+        </div>
+      {% endfor %}
+    {% endif %}
+
+    <h1>Adicionar Despesa</h1>
+    <p class="subtitle">Registre uma nova despesa para o grupo</p>
+
+    <div class="card">
+      <form method="post">
+        {% csrf_token %}
+
+        <label for="description">Descrição</label>
+        <input id="description" name="description" type="text" maxlength="255" placeholder="Ex.: Almoço" required>
+
+        <label for="amount">Valor (R$)</label>
+        <input id="amount" name="amount" type="text" inputmode="decimal" placeholder="Ex.: 100,00" required>
+
+        <label for="paid_by">Quem pagou?</label>
+        <select id="paid_by" name="paid_by" required>
+          <option value="">Selecione</option>
+          {% for p in participants %}
+            <option value="{{ p.user.id }}">{{ p.user.get_full_name|default:p.user.username }}</option>
+          {% endfor %}
+        </select>
+
+        <div class="form-actions" style="margin-top:12px">
+          <a href="{% url 'rachais:group_detail' group.id %}" class="btn btn-light">Cancelar</a>
+          <button class="btn" type="submit">Salvar</button>
+        </div>
+      </form>
+    </div>
+  </section>
+</div>
+{% endblock %}

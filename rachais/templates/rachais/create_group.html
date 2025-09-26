@@ -1,26 +1,82 @@
 {% extends "base.html" %}
-
 {% block content %}
-<section class="content" style="max-width:640px;margin:0 auto;">
-  {% if messages %}
-    {% for message in messages %}
-      <div class="banner {% if message.tags %}banner-{{ message.tags }}{% endif %}">
-        {{ message }}
-      </div>
-    {% endfor %}
-  {% endif %}
-
-  <h1 class="text-2xl font-semibold mb-4" style="margin-bottom:12px">Criar novo grupo</h1>
-
-  <form method="post">
-    {% csrf_token %}
-    <label for="name">Nome do Grupo</label>
-    <input id="name" name="name" type="text" maxlength="100"
-           placeholder="Ex: Viagem para a Praia" required>
-
-    <div class="form-actions">
-      <button type="submit" class="btn">Criar</button>
+<div class="layout">
+  <aside class="sidebar">
+    <h2>Seus Grupos</h2>
+    <a href="{% url 'rachais:create_group' %}" class="btn btn-block">+ Criar Novo Grupo</a>
+    <div style="margin-top:12px">
+      <a class="group-item" href="#">{{ group.name }}</a>
     </div>
-  </form>
-</section>
+  </aside>
+
+  <section class="content">
+    {% if messages %}
+      {% for m in messages %}
+        <div class="banner {% if m.tags %}banner-{{ m.tags }}{% endif %}">
+          {{ m }}
+        </div>
+      {% endfor %}
+    {% endif %}
+
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+      <div>
+        <h1>{{ group.name }}</h1>
+        <p class="subtitle">Adicione participantes e comece a registrar despesas</p>
+      </div>
+      <a href="{% url 'rachais:add_expense' group.id %}" class="btn">+ Adicionar Despesa</a>
+    </div>
+
+    <!-- PARTICIPANTES -->
+    <div class="card" style="margin-top:16px">
+      <h3>Participantes</h3>
+
+      <!-- Form: username OU e-mail -->
+      <form method="post" action="{% url 'rachais:add_participant' group.id %}" style="margin:8px 0 12px">
+        {% csrf_token %}
+        <label for="identifier">Username ou e-mail</label>
+        <input id="identifier" name="identifier" type="text" placeholder="ex.: joao ou joao@email.com" required>
+        <div class="form-actions">
+          <button class="btn btn-light" type="submit">+ Convidar Participante</button>
+        </div>
+      </form>
+
+      {% with plist=group.participants.all %}
+        {% if plist %}
+          <ul style="list-style:none;padding:0;margin:8px 0 0;display:flex;flex-wrap:wrap;gap:8px">
+            {% for p in plist %}
+              <li class="group-item" style="display:inline-block;margin:0">{{ p.user.get_full_name|default:p.user.username }}</li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p class="empty">Nenhum participante ainda</p>
+        {% endif %}
+      {% endwith %}
+    </div>
+
+    <!-- DESPESAS -->
+    <div class="card">
+      <h3>Despesas</h3>
+
+      {% if expenses %}
+        <ul style="list-style:none;padding:0;margin:0">
+          {% for e in expenses %}
+            <li style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #eee">
+              <div>
+                <div style="font-weight:600">{{ e.description }}</div>
+                <div class="muted">Pago por {{ e.paid_by.get_full_name|default:e.paid_by.username }}</div>
+              </div>
+              <div style="font-weight:700">R$ {{ e.amount }}</div>
+            </li>
+          {% endfor %}
+        </ul>
+        <div style="margin-top:10px;text-align:right">
+          <span class="muted" style="margin-right:6px">Total do grupo:</span>
+          <span style="font-size:1.125rem;font-weight:800">R$ {{ total }}</span>
+        </div>
+      {% else %}
+        <p class="empty">Nenhuma despesa adicionada</p>
+      {% endif %}
+    </div>
+  </section>
+</div>
 {% endblock %}

@@ -1,10 +1,12 @@
+from decimal import Decimal, InvalidOperation
+
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.db.models import Q
 
-from .models import Group, Participant
+from .models import Group, Participant, Expense
 
 User = get_user_model()
 
@@ -31,7 +33,20 @@ def group_detail(request, group_id):
         ).distinct(),
         pk=group_id,
     )
-    return render(request, "rachais/group_detail.html", {"group": group})
+    expenses = group.expenses.select_related("paid_by").all()
+    participants = group.participants.select_related("user").all()
+    total = sum((e.amount for e in expenses), Decimal("0"))
+
+    return render(
+        request,
+        "rachais/group_detail.html",
+        {
+            "group": group,
+            "expenses": expenses,
+            "participants": participants,
+            "total": total,
+        },
+    )
 
 
 @login_required
@@ -40,7 +55,6 @@ def create_group(request):
     if request.method == "POST":
         name = (request.POST.get("name") or "").strip()
 
-        # validações simples (sem Django Forms)
         if not name:
             messages.error(request, "Informe um nome para o grupo.")
         elif len(name) > 100:
@@ -53,7 +67,6 @@ def create_group(request):
             messages.success(request, "Grupo criado com sucesso!")
             return redirect("rachais:group_detail", group_id=new_group.id)
 
-    # GET ou POST inválido → renderiza o form
     return render(request, "rachais/create_group.html")
 
 
@@ -98,3 +111,57 @@ def add_participant(request, group_id):
         return redirect("rachais:group_detail", group_id=group.id)
 
     return redirect("rachais:group_detail", group_id=group.id)
+
+
+# --- NOVO ---
+@login_required
+def add_expense(request, group_id):
+    """
+    Adiciona uma despesa ao grupo (apenas participantes podem registrar).
+    Valida valor > 0 e que o pagador pertença ao grupo.
+    """
+    group = get_object_or_404(Group, pk=group_id)
+
+    # precisa ser participante (ou criador já é participante via create_group)
+    if not Participant.objects.filter(group=group, user=request.user).exists():
+        messages.error(request, "Você não participa deste grupo.")
+        return redirect("rachais:group_detail", group_id=group.id)
+
+    participants = group.participants.select_related("user").all()
+
+    if request.method == "POST":
+        description = (request.POST.get("description") or "").strip()
+        raw_amount = (request.POST.get("amount") or "").strip()
+        paid_by_id = request.POST.get("paid_by")
+
+        if not description:
+            messages.error(request, "Informe a descrição da despesa.")
+            return render(request, "rachais/add_expense.html", {"group": group, "participants": participants})
+
+        # aceita "100", "100,00", "1.234,56"
+        norm = raw_amount.replace(".", "").replace(",", ".")
+        try:
+            amount = Decimal(norm)
+        except (InvalidOperation, AttributeError):
+            messages.error(request, "Informe um valor válido (ex.: 100,00).")
+            return render(request, "rachais/add_expense.html", {"group": group, "participants": participants})
+
+        if amount <= 0:
+            messages.error(request, "O valor da despesa deve ser maior que zero")
+            return render(request, "rachais/add_expense.html", {"group": group, "participants": participants})
+
+        try:
+            payer = User.objects.get(pk=paid_by_id)
+        except (User.DoesNotExist, ValueError, TypeError):
+            messages.error(request, "Selecione quem pagou.")
+            return render(request, "rachais/add_expense.html", {"group": group, "participants": participants})
+
+        if not Participant.objects.filter(group=group, user=payer).exists():
+            messages.error(request, "O pagador precisa ser participante do grupo.")
+            return render(request, "rachais/add_expense.html", {"group": group, "participants": participants})
+
+        Expense.objects.create(group=group, description=description, amount=amount, paid_by=payer)
+        messages.success(request, "Despesa registrada com sucesso.")
+        return redirect("rachais:group_detail", group_id=group.id)
+
+    return render(request, "rachais/add_expense.html", {"group": group, "participants": participants})
