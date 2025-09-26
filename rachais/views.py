@@ -12,40 +12,24 @@ User = get_user_model()
 
 
 def _display_name(user: User) -> str:
-    """
-    Nome para exibir vindo do CADASTRO (e perfis comuns):
-    1) get_full_name() (first_name + last_name)
-    2) first_name
-    3) user.name / user.full_name / user.display_name
-    4) user.profile.(display_name|name|full_name) se existir
-    5) username sem domínio (se for e-mail)
-    """
     if not user:
         return "Usuário"
-
-    # 1 e 2: campos padrão do Django
     full = (user.get_full_name() or "").strip()
     if full:
         return full
     first = (getattr(user, "first_name", "") or "").strip()
     if first:
         return first
-
-    # 3: campos comuns em modelos customizados
     for attr in ("name", "full_name", "display_name"):
         val = (getattr(user, attr, "") or "").strip()
         if val:
             return val
-
-    # 4: perfil relacionado (OneToOne 'profile' muito comum)
     prof = getattr(user, "profile", None)
     if prof:
         for attr in ("display_name", "name", "full_name", "first_name"):
             val = (getattr(prof, attr, "") or "").strip()
             if val:
                 return val
-
-    # 5: fallback — username sem domínio se parecer e-mail
     uname = (getattr(user, "username", "") or "").strip()
     if "@" in uname:
         uname = uname.split("@", 1)[0]
@@ -54,7 +38,6 @@ def _display_name(user: User) -> str:
 
 @login_required
 def group_list(request):
-    """Lista apenas os grupos em que o usuário é participante (ou criou)."""
     groups = (
         Group.objects
         .filter(Q(participants__user=request.user) | Q(creator=request.user))
@@ -67,7 +50,6 @@ def group_list(request):
 
 @login_required
 def group_detail(request, group_id):
-    """Exibe um grupo somente se o usuário for participante ou criador."""
     group = get_object_or_404(
         Group.objects.filter(
             Q(participants__user=request.user) | Q(creator=request.user)
@@ -78,46 +60,35 @@ def group_detail(request, group_id):
     expenses = list(group.expenses.select_related("paid_by").all())
     participants = list(group.participants.select_related("user").all())
 
-    # Nome amigável para cada participante
     for p in participants:
         setattr(p, "display_name", _display_name(p.user))
 
     total = sum((e.amount for e in expenses), Decimal("0"))
 
-    # Divisão igual por despesa
     users_in_group = [p.user for p in participants]
     n_participants = len(users_in_group)
 
     for e in expenses:
         setattr(e, "paid_by_name", _display_name(e.paid_by))
-
         split_list = []
         if n_participants > 0:
             cota = (e.amount / Decimal(n_participants)).quantize(Decimal("0.01"))
             for u in users_in_group:
                 if u.id == e.paid_by_id:
-                    continue  # quem pagou não deve a si mesmo
-                split_list.append({
-                    "name": _display_name(u),
-                    "amount": cota,
-                })
+                    continue
+                split_list.append({"name": _display_name(u), "amount": cota})
         setattr(e, "split_list", split_list)
 
     return render(
         request,
         "rachais/group_detail.html",
-        {
-            "group": group,
-            "expenses": expenses,
-            "participants": participants,
-            "total": total,
-        },
+        {"group": group, "expenses": expenses, "participants": participants, "total": total},
     )
 
 
 @login_required
 def create_group(request):
-    """Cria um grupo e adiciona automaticamente o criador como participante."""
+    """Cria um grupo; impede nomes repetidos apenas para o MESMO criador."""
     if request.method == "POST":
         name = (request.POST.get("name") or "").strip()
 
@@ -125,8 +96,8 @@ def create_group(request):
             messages.error(request, "Informe um nome para o grupo.")
         elif len(name) > 100:
             messages.error(request, "O nome deve ter no máximo 100 caracteres.")
-        elif Group.objects.filter(name__iexact=name).exists():
-            messages.error(request, "Já existe um grupo com esse nome.")
+        elif Group.objects.filter(creator=request.user, name__iexact=name).exists():
+            messages.error(request, "Você já tem um grupo com esse nome.")
         else:
             new_group = Group.objects.create(name=name, creator=request.user)
             Participant.objects.get_or_create(group=new_group, user=request.user)
@@ -138,10 +109,6 @@ def create_group(request):
 
 @login_required
 def add_participant(request, group_id):
-    """
-    Adiciona participante por username OU e-mail.
-    Somente o criador do grupo pode adicionar.
-    """
     group = get_object_or_404(Group, pk=group_id)
 
     if request.user != group.creator:
@@ -149,13 +116,12 @@ def add_participant(request, group_id):
         return redirect("rachais:group_detail", group_id=group.id)
 
     if request.method == "POST":
-        ident = (request.POST.get("identifier") or "").strip()  # username OU e-mail
+        ident = (request.POST.get("identifier") or "").strip()
 
         if not ident:
             messages.error(request, "Informe o username ou e-mail do usuário.")
             return redirect("rachais:group_detail", group_id=group.id)
 
-        # procura primeiro por username; se não achar, tenta por e-mail
         try:
             user = User.objects.get(username__iexact=ident)
         except User.DoesNotExist:
@@ -181,10 +147,6 @@ def add_participant(request, group_id):
 
 @login_required
 def add_expense(request, group_id):
-    """
-    Adiciona uma despesa ao grupo (apenas participantes podem registrar).
-    Valida valor > 0 e que o pagador pertença ao grupo.
-    """
     group = get_object_or_404(Group, pk=group_id)
 
     if not Participant.objects.filter(group=group, user=request.user).exists():
@@ -204,7 +166,6 @@ def add_expense(request, group_id):
             messages.error(request, "Informe a descrição da despesa.")
             return render(request, "rachais/add_expense.html", {"group": group, "participants": participants})
 
-        # aceita "100", "100,00", "1.234,56"
         norm = raw_amount.replace(".", "").replace(",", ".")
         try:
             amount = Decimal(norm)
