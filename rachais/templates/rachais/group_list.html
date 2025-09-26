@@ -1,16 +1,38 @@
-<h1>Meus Grupos</h1>
+{% extends "base.html" %}
 
-{% if group_list %}
-    <ul>
-        {% for group in group_list %}
-            <li>
-                <a href="{% url 'rachais:group_detail' group.id %}">{{ group.name }}</a>
-            </li>
+{% block content %}
+<div class="layout">
+  <!-- Lateral -->
+  <aside class="sidebar">
+    <h2>Seus Grupos</h2>
+    <a href="{% url 'rachais:create_group' %}" class="btn btn-block">+ Criar Novo Grupo</a>
+
+    <div style="margin-top:12px">
+      {% if groups %}
+        {% for g in groups %}
+          <a class="group-item" href="{% url 'rachais:group_detail' g.id %}">
+            {{ g.name }}
+          </a>
         {% endfor %}
-    </ul>
+      {% else %}
+        <div class="group-item" style="opacity:.7">Você ainda não participa de nenhum grupo.</div>
+      {% endif %}
+    </div>
+  </aside>
 
-{% else %}
-    <p>Você ainda não participa de nenhum grupo.</p>
-{% endif %}
+  <!-- Conteúdo principal -->
+  <section class="content">
+    <h1>Meus Grupos</h1>
+    <p class="subtitle">Crie um grupo para começar a dividir despesas.</p>
 
-<a href="{% url 'rachais:create_group' %}">Criar Novo Grupo</a>
+    <div class="card">
+      <h3>Como funciona?</h3>
+      <p class="empty">Crie um grupo, convide participantes e registre as despesas. O RachAi calcula quem deve quanto.</p>
+      <div style="margin-top:12px">
+        <a class="btn" href="{% url 'rachais:create_group' %}">+ Criar Novo Grupo</a>
+        <a class="btn btn-light" href="#">Ver tutorial</a>
+      </div>
+    </div>
+  </section>
+</div>
+{% endblock %}

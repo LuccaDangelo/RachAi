@@ -1,33 +1,22 @@
 {% load static %}
-<!doctype html>
-<html lang="pt-br">
+<!DOCTYPE html>
+<html lang="pt-BR">
 <head>
   <meta charset="utf-8">
-  <link rel="icon" href="{% static 'icon.ico' %}" type="image/x-icon">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>{% block title %}RachAI{% endblock %}</title>
-  <link rel="stylesheet" href="{% static 'css/auth.css' %}">
+  <title>RachAi</title>
+  <link rel="icon" href="{% static 'css/icon.ico' %}">
+  <link rel="stylesheet" href="{% static 'css/app.css' %}">
 </head>
 <body>
-<header class="topbar">
-  <div class="brand">
-    <div class="logo">💠</div>
-    <strong>RachAí</strong>
-  </div>
-  <nav class="top-actions">
-    {% if user.is_authenticated %}
-      <a class="link" href="{% url 'rachais:group_list' %}">Meus grupos</a>
-      <a class="btn ghost" href="{% url 'accounts:logout' %}">Sair</a>
-    {% else %}
-      <a class="link" href="{% url 'accounts:signup' %}">Cadastrar</a>
-      <a class="btn ghost" href="{% url 'accounts:login' %}">Entrar</a>
-    {% endif %}
-  </nav>
-</header>
+  <header class="topbar">
+    <div class="container">
+      <strong>RachAi</strong>
+    </div>
+  </header>
 
-<main class="page">
-  {% for message in messages %}<div class="msg">{{ message }}</div>{% endfor %}
-  {% block content %}{% endblock %}
-</main>
+  <main class="container page">
+    {% block content %}{% endblock %}
+  </main>
 </body>
 </html>

@@ -1,17 +1,34 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <title>{{ group.name }} - RachAí</title>
-    <link rel="stylesheet" href="{% static 'rachais/css/style.css' %}">
-</head>
-<body>
-    <div class="container">
-        <h1>Grupo: {{ group.name }}</h1>
-        <p><i>(Página de detalhes do grupo)</i></p>
-        <hr>
-        <a class="button" href="{% url 'rachais:home' %}">Voltar para a lista de todos os grupos</a>
+{% extends "base.html" %}
+{% block content %}
+<div class="layout">
+  <aside class="sidebar">
+    <h2>Seus Grupos</h2>
+    <a href="{% url 'rachais:create_group' %}" class="btn btn-block">+ Criar Novo Grupo</a>
+    <div style="margin-top:12px">
+      <a class="group-item" href="#">{{ group.name }}</a>
     </div>
-</body>
-</html>
+  </aside>
+
+  <section class="content">
+    {% if messages %}
+      {% for m in messages %}
+        <div class="banner">{{ m }}</div>
+      {% endfor %}
+    {% endif %}
+
+    <h1>{{ group.name }}</h1>
+    <p class="subtitle">Adicione participantes e comece a registrar despesas</p>
+    <a class="btn btn-light">+ Convidar Participantes</a>
+
+    <div class="card" style="margin-top:16px">
+      <h3>Participantes</h3>
+      <p class="empty">Nenhum participante ainda</p>
+    </div>
+
+    <div class="card">
+      <h3>Despesas</h3>
+      <p class="empty">Nenhuma despesa adicionada</p>
+    </div>
+  </section>
+</div>
+{% endblock %}
