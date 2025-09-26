@@ -1,9 +1,11 @@
 from decimal import Decimal, InvalidOperation
+from typing import Optional
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import AbstractUser
 from django.db.models import Q
 
 from .models import Group, Participant, Expense
@@ -11,25 +13,30 @@ from .models import Group, Participant, Expense
 User = get_user_model()
 
 
-def _display_name(user: User) -> str:
+def _display_name(user: Optional[AbstractUser]) -> str:
     if not user:
         return "Usuário"
+
     full = (user.get_full_name() or "").strip()
     if full:
         return full
+
     first = (getattr(user, "first_name", "") or "").strip()
     if first:
         return first
+
     for attr in ("name", "full_name", "display_name"):
         val = (getattr(user, attr, "") or "").strip()
         if val:
             return val
+
     prof = getattr(user, "profile", None)
     if prof:
         for attr in ("display_name", "name", "full_name", "first_name"):
             val = (getattr(prof, attr, "") or "").strip()
             if val:
                 return val
+
     uname = (getattr(user, "username", "") or "").strip()
     if "@" in uname:
         uname = uname.split("@", 1)[0]
