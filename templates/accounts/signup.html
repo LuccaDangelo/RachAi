@@ -1,34 +1,47 @@
 {% extends "base.html" %}
-{% block title %}Criar conta · RachAí{% endblock %}
 {% block content %}
-<section class="auth-wrap">
-  <div class="card auth-card">
-    <div class="auth-logo">💠 RachAí</div>
-    <h1 class="auth-title">Criar conta</h1>
-    <p class="auth-sub">Preencha seus dados para começar</p>
+<div class="max-w-2xl mx-auto p-6">
+  <div class="card">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+      <span style="width:10px;height:10px;background:#3b82f6;border-radius:50%;display:inline-block"></span>
+      <span class="muted">RachAí</span>
+    </div>
 
-    <form method="post" class="auth-form">
+    <h1>Criar conta</h1>
+    <p class="subtitle">Preencha seus dados para começar</p>
+
+    {% if messages %}
+      {% for m in messages %}
+        <div class="banner {% if m.tags %}banner-{{ m.tags }}{% endif %}">{{ m }}</div>
+      {% endfor %}
+    {% endif %}
+
+    <form method="post" style="margin-top:12px">
       {% csrf_token %}
-      <div class="field">
-        <label for="{{ form.username.id_for_label }}">Email</label>
-        {{ form.username.as_widget|safe }}
-      </div>
-      <div class="field">
-        <label for="{{ form.password1.id_for_label }}">Senha</label>
-        {{ form.password1.as_widget|safe }}
-      </div>
-      <div class="field">
-        <label for="{{ form.password2.id_for_label }}">Confirmar senha</label>
-        {{ form.password2.as_widget|safe }}
+
+      <label for="first_name">Primeiro nome</label>
+      <input id="first_name" name="first_name" type="text" placeholder="Ex.: Ana" required>
+
+      <label for="email" style="margin-top:8px">Email</label>
+      <input id="email" name="email" type="email" placeholder="voce@email.com" required>
+
+      <label for="password" style="margin-top:8px">Senha</label>
+      <input id="password" name="password" type="password" placeholder="********" required>
+
+      <label for="confirm_password" style="margin-top:8px">Confirmar senha</label>
+      <input id="confirm_password" name="confirm_password" type="password" placeholder="********" required>
+
+      <div class="muted" style="margin:10px 0 12px">
+        Ao continuar, você aceita os termos de uso.
       </div>
 
-      <p class="terms">Ao continuar, você aceita os termos de uso.</p>
-      <button type="submit" class="btn primary block">Cadastrar</button>
+      <button class="btn" type="submit">Cadastrar</button>
     </form>
 
-    <div class="muted center small">Já tem conta?
-      <a href="{% url 'accounts:login' %}" class="link">Entrar</a>
+    <div class="muted" style="margin-top:10px">
+      Já tem conta?
+      <a href="{% url 'accounts:login' %}">Entrar</a>
     </div>
   </div>
-</section>
+</div>
 {% endblock %}

@@ -11,6 +11,47 @@ from .models import Group, Participant, Expense
 User = get_user_model()
 
 
+def _display_name(user: User) -> str:
+    """
+    Nome para exibir vindo do CADASTRO (e perfis comuns):
+    1) get_full_name() (first_name + last_name)
+    2) first_name
+    3) user.name / user.full_name / user.display_name
+    4) user.profile.(display_name|name|full_name) se existir
+    5) username sem domínio (se for e-mail)
+    """
+    if not user:
+        return "Usuário"
+
+    # 1 e 2: campos padrão do Django
+    full = (user.get_full_name() or "").strip()
+    if full:
+        return full
+    first = (getattr(user, "first_name", "") or "").strip()
+    if first:
+        return first
+
+    # 3: campos comuns em modelos customizados
+    for attr in ("name", "full_name", "display_name"):
+        val = (getattr(user, attr, "") or "").strip()
+        if val:
+            return val
+
+    # 4: perfil relacionado (OneToOne 'profile' muito comum)
+    prof = getattr(user, "profile", None)
+    if prof:
+        for attr in ("display_name", "name", "full_name", "first_name"):
+            val = (getattr(prof, attr, "") or "").strip()
+            if val:
+                return val
+
+    # 5: fallback — username sem domínio se parecer e-mail
+    uname = (getattr(user, "username", "") or "").strip()
+    if "@" in uname:
+        uname = uname.split("@", 1)[0]
+    return uname or "Usuário"
+
+
 @login_required
 def group_list(request):
     """Lista apenas os grupos em que o usuário é participante (ou criou)."""
@@ -33,9 +74,34 @@ def group_detail(request, group_id):
         ).distinct(),
         pk=group_id,
     )
-    expenses = group.expenses.select_related("paid_by").all()
-    participants = group.participants.select_related("user").all()
+
+    expenses = list(group.expenses.select_related("paid_by").all())
+    participants = list(group.participants.select_related("user").all())
+
+    # Nome amigável para cada participante
+    for p in participants:
+        setattr(p, "display_name", _display_name(p.user))
+
     total = sum((e.amount for e in expenses), Decimal("0"))
+
+    # Divisão igual por despesa
+    users_in_group = [p.user for p in participants]
+    n_participants = len(users_in_group)
+
+    for e in expenses:
+        setattr(e, "paid_by_name", _display_name(e.paid_by))
+
+        split_list = []
+        if n_participants > 0:
+            cota = (e.amount / Decimal(n_participants)).quantize(Decimal("0.01"))
+            for u in users_in_group:
+                if u.id == e.paid_by_id:
+                    continue  # quem pagou não deve a si mesmo
+                split_list.append({
+                    "name": _display_name(u),
+                    "amount": cota,
+                })
+        setattr(e, "split_list", split_list)
 
     return render(
         request,
@@ -107,13 +173,12 @@ def add_participant(request, group_id):
             return redirect("rachais:group_detail", group_id=group.id)
 
         Participant.objects.create(group=group, user=user)
-        messages.success(request, f"{user.username} adicionado com sucesso!")
+        messages.success(request, f"{_display_name(user)} adicionado(a) com sucesso!")
         return redirect("rachais:group_detail", group_id=group.id)
 
     return redirect("rachais:group_detail", group_id=group.id)
 
 
-# --- NOVO ---
 @login_required
 def add_expense(request, group_id):
     """
@@ -122,12 +187,13 @@ def add_expense(request, group_id):
     """
     group = get_object_or_404(Group, pk=group_id)
 
-    # precisa ser participante (ou criador já é participante via create_group)
     if not Participant.objects.filter(group=group, user=request.user).exists():
         messages.error(request, "Você não participa deste grupo.")
         return redirect("rachais:group_detail", group_id=group.id)
 
-    participants = group.participants.select_related("user").all()
+    participants = list(group.participants.select_related("user").all())
+    for p in participants:
+        setattr(p, "display_name", _display_name(p.user))
 
     if request.method == "POST":
         description = (request.POST.get("description") or "").strip()

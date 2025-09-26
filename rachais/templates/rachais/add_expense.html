@@ -32,7 +32,7 @@
         <select id="paid_by" name="paid_by" required>
           <option value="">Selecione</option>
           {% for p in participants %}
-            <option value="{{ p.user.id }}">{{ p.user.get_full_name|default:p.user.username }}</option>
+            <option value="{{ p.user.id }}">{{ p.display_name }}</option>
           {% endfor %}
         </select>
 

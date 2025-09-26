@@ -18,13 +18,11 @@
       {% endfor %}
     {% endif %}
 
-    <!-- Cabeçalho com botão -->
     <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
       <div>
         <h1>{{ group.name }}</h1>
         <p class="subtitle">Adicione participantes e comece a registrar despesas</p>
       </div>
-      <!-- AQUI ESTÁ O BOTÃO -->
       <a href="{% url 'rachais:add_expense' group.id %}" class="btn">+ Adicionar Despesa</a>
     </div>
 
@@ -45,7 +43,7 @@
         {% if plist %}
           <ul style="list-style:none;padding:0;margin:8px 0 0;display:flex;flex-wrap:wrap;gap:8px">
             {% for p in plist %}
-              <li class="group-item" style="display:inline-block;margin:0">{{ p.user.get_full_name|default:p.user.username }}</li>
+              <li class="group-item" style="display:inline-block;margin:0">{{ p.display_name }}</li>
             {% endfor %}
           </ul>
         {% else %}
@@ -58,22 +56,39 @@
     <div class="card">
       <div style="display:flex;align-items:center;justify-content:space-between;">
         <h3>Despesas</h3>
-        <!-- Botão também aqui, se preferir -->
         <a href="{% url 'rachais:add_expense' group.id %}" class="btn btn-light">+ Adicionar</a>
       </div>
 
       {% if expenses %}
         <ul style="list-style:none;padding:0;margin:0">
           {% for e in expenses %}
-            <li style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #eee">
-              <div>
-                <div style="font-weight:600">{{ e.description }}</div>
-                <div class="muted">Pago por {{ e.paid_by.get_full_name|default:e.paid_by.username }}</div>
+            <li style="padding:12px 0;border-bottom:1px solid #eee">
+              <div style="display:flex;justify-content:space-between;align-items:center;">
+                <div>
+                  <div style="font-weight:600">{{ e.description }}</div>
+                  <div class="muted">
+                    Pago por {{ e.paid_by_name }}
+                  </div>
+                </div>
+                <div style="font-weight:700">R$ {{ e.amount }}</div>
               </div>
-              <div style="font-weight:700">R$ {{ e.amount }}</div>
+
+              {% if e.split_list %}
+                <div class="muted" style="margin-top:6px">
+                  <strong>Divisão igual:</strong>
+                  {% for s in e.split_list %}
+                    {{ s.name }} deve R$ {{ s.amount }}{% if not forloop.last %};{% else %}.{% endif %}
+                  {% endfor %}
+                </div>
+              {% else %}
+                <div class="muted" style="margin-top:6px">
+                  <strong>Divisão igual:</strong> não há outros participantes para dividir.
+                </div>
+              {% endif %}
             </li>
           {% endfor %}
         </ul>
+
         <div style="margin-top:10px;text-align:right">
           <span class="muted" style="margin-right:6px">Total do grupo:</span>
           <span style="font-size:1.125rem;font-weight:800">R$ {{ total }}</span>
