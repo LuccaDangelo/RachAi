@@ -43,26 +43,29 @@ def _display_name(user: Optional[AbstractUser]) -> str:
     return uname or "Usuário"
 
 
-@login_required
-def group_list(request):
-    groups = (
+def _sidebar_groups_qs(user: User):
+    """QS padrão para preencher a sidebar com os grupos do usuário."""
+    return (
         Group.objects
-        .filter(Q(participants__user=request.user) | Q(creator=request.user))
+        .filter(Q(participants__user=user) | Q(creator=user))
         .distinct()
         .order_by("-created_at")
         .prefetch_related("participants__user")
     )
+
+
+# ---------------------- VIEWS ---------------------- #
+
+@login_required
+def group_list(request):
+    groups = _sidebar_groups_qs(request.user)
     return render(request, "rachais/group_list.html", {"groups": groups})
 
 
 @login_required
 def group_detail(request, group_id):
-    group = get_object_or_404(
-        Group.objects.filter(
-            Q(participants__user=request.user) | Q(creator=request.user)
-        ).distinct(),
-        pk=group_id,
-    )
+    groups = _sidebar_groups_qs(request.user)  # sidebar
+    group = get_object_or_404(groups, pk=group_id)
 
     expenses = list(group.expenses.select_related("paid_by").all())
     participants = list(group.participants.select_related("user").all())
@@ -89,13 +92,21 @@ def group_detail(request, group_id):
     return render(
         request,
         "rachais/group_detail.html",
-        {"group": group, "expenses": expenses, "participants": participants, "total": total},
+        {
+            "group": group,
+            "groups": groups,           # para a sidebar
+            "expenses": expenses,
+            "participants": participants,
+            "total": total,
+        },
     )
 
 
 @login_required
 def create_group(request):
     """Cria um grupo; impede nomes repetidos apenas para o MESMO criador."""
+    groups = _sidebar_groups_qs(request.user)  # manter sidebar na página de criação
+
     if request.method == "POST":
         name = (request.POST.get("name") or "").strip()
 
@@ -111,7 +122,14 @@ def create_group(request):
             messages.success(request, "Grupo criado com sucesso!")
             return redirect("rachais:group_detail", group_id=new_group.id)
 
-    return render(request, "rachais/create_group.html")
+        # se houver erro, renderiza preservando a sidebar e o valor digitado
+        return render(
+            request,
+            "rachais/create_group.html",
+            {"groups": groups, "name": name},
+        )
+
+    return render(request, "rachais/create_group.html", {"groups": groups})
 
 
 @login_required

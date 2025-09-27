@@ -7,7 +7,7 @@
     <h2>Seus Grupos</h2>
     <a href="{% url 'rachais:create_group' %}" class="btn btn-block">+ Criar Novo Grupo</a>
 
-    <div style="margin-top:12px">
+    <div class="group-list">
       {% if groups %}
         {% for g in groups %}
           <a class="group-item" href="{% url 'rachais:group_detail' g.id %}">

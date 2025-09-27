@@ -5,8 +5,16 @@
   <aside class="sidebar">
     <h2>Seus Grupos</h2>
     <a href="{% url 'rachais:create_group' %}" class="btn btn-block">+ Criar Novo Grupo</a>
-    <div style="margin-top:12px">
-      <a class="group-item" href="#">{{ group.name }}</a>
+
+    <div class="group-list">
+      {% for g in groups %}
+        <a class="group-item {% if g.id == group.id %}active{% endif %}"
+           href="{% url 'rachais:group_detail' g.id %}">
+          {{ g.name }}
+        </a>
+      {% empty %}
+        <span class="muted">Você ainda não tem grupos.</span>
+      {% endfor %}
     </div>
   </aside>
 
@@ -19,6 +27,11 @@
         </div>
       {% endfor %}
     {% endif %}
+
+    <!-- BOTÃO VOLTAR PARA CRIAR GRUPO -->
+    <div style="margin-bottom:10px">
+      <a href="{% url 'rachais:create_group' %}" class="btn btn-light">← Voltar para criar grupo</a>
+    </div>
 
     <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
       <div>

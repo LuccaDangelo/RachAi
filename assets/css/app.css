@@ -62,9 +62,17 @@ html,body{
 .btn-light{background:#fff;color:#0f172a;border-color:var(--gray-300)}
 .btn-block{width:100%;text-align:center}
 
-/* Itens da lista de grupos (corrige sobreposição e adiciona espaçamento) */
+/* Lista de grupos com espaçamento consistente */
+.group-list{
+  margin-top:12px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;            /* espaçamento único entre itens */
+}
+
+/* Itens da lista de grupos */
 .group-item{
-  display:block;                 /* impede que fiquem lado a lado/encavalem */
+  display:block;
   background:#eef2f7;
   border:1px solid var(--gray-200);
   border-radius:8px;
@@ -72,9 +80,12 @@ html,body{
   font-size:14px;
   color:#0f172a;
   text-decoration:none;
+  margin:0;            /* zera margens para usar só o gap do contêiner */
 }
 .group-item:hover{background:#e9eef6}
-.group-item + .group-item{margin-top:10px}  /* espaço entre os cards da lista */
+
+/* (override) remove a antiga margem em sequência para não somar com o gap */
+.group-item + .group-item{margin-top:0}
 
 /* Conteúdo principal */
 .content{
@@ -109,10 +120,10 @@ html,body{
 }
 
 /* Banners por tipo (usados com message.tags do Django) */
-.banner-success{ background:#16a34a; color:#fff; }  /* sucesso (verde) */
-.banner-error{   background:#dc2626; color:#fff; }  /* erro (vermelho) */
-.banner-warning{ background:#d97706; color:#fff; }  /* aviso (laranja) */
-.banner-info{    background:#0ea5e9; color:#fff; }  /* informativo (azul) */
+.banner-success{ background:#16a34a; color:#fff; }
+.banner-error{   background:#dc2626; color:#fff; }
+.banner-warning{ background:#d97706; color:#fff; }
+.banner-info{    background:#0ea5e9; color:#fff; }
 
 /* Formulários básicos (caso usem HTML simples) */
 label{display:block;margin:8px 0 6px;font-weight:600}
