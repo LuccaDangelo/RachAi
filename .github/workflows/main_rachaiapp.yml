@@ -1,8 +1,4 @@
-# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
-# More GitHub Actions for Azure: https://github.com/Azure/actions
-# More info on Python, GitHub Actions, and Azure App Service: https://aka.ms/python-webapps-actions
-
-name: Build and deploy Python app to Azure Web App - rachaiapp
+name: Build and deploy Python app to Azure Web App - Rachaiapp
 
 on:
   push:
@@ -14,7 +10,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: read #This is required for actions/checkout
+      contents: read
 
     steps:
       - uses: actions/checkout@v4
@@ -31,9 +27,15 @@ jobs:
       
       - name: Install dependencies
         run: pip install -r requirements.txt
-        
-      # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
-
+      
+      - name: Run collectstatic
+        run: python manage.py collectstatic --noinput
+      
+      - name: Cleaning testing files
+        run: |
+          if [ -f db.sqlite3 ]; then rm db.sqlite3; fi
+          if [ -f .env ]; then rm .env; fi
+      
       - name: Upload artifact for deployment jobs
         uses: actions/upload-artifact@v4
         with:
@@ -58,14 +60,11 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_9F7DC9F834B04295833337F06FCDFF16 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_3E792284F1CB4C75BE34CA8933F60FB5 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_9B688C1DE1C44FABA7BFC9E07411F6C8 }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_18288CBC6E09473CA36068A95CBB7E6B }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_7EF293DBC9B7463CB96FAF15C898FBDB }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_CB577C1833D9474E951AFFD28C75341F }}
 
       - name: 'Deploy to Azure Web App'
         uses: azure/webapps-deploy@v3
         id: deploy-to-webapp
-        with:
-          app-name: 'rachaiapp'
-          slot-name: 'Production'
-          
+        with
