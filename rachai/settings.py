@@ -70,7 +70,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'whitenoise.runserver_nostatic',
     'rachais',
-    'accounts',
 ]
 
 # --------------------------------------------------
@@ -123,7 +122,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Autenticação
 # --------------------------------------------------
 AUTHENTICATION_BACKENDS = [
-    'accounts.backends.EmailOrUsernameModelBackend',  
+    'rachais.backends.EmailOrUsernameModelBackend',  
     'django.contrib.auth.backends.ModelBackend',
 ]
 

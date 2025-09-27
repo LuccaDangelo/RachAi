@@ -1,36 +1,33 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="layout">
-  <!-- Lateral -->
-  <aside class="sidebar">
-    <h2>Seus Grupos</h2>
-    <a href="{% url 'rachais:create_group' %}" class="btn btn-block">+ Criar Novo Grupo</a>
-
-    <div class="group-list">
-      {% if groups %}
-        {% for g in groups %}
-          <a class="group-item" href="{% url 'rachais:group_detail' g.id %}">
-            {{ g.name }}
-          </a>
-        {% endfor %}
-      {% else %}
-        <div class="group-item" style="opacity:.7">Você ainda não participa de nenhum grupo.</div>
-      {% endif %}
+<div class="dashboard-shell">
+  <aside class="dashboard-sidebar">
+    <div class="sidebar-card">
+      <div class="sidebar-title">Seus Grupos</div>
+      <a class="sidebar-action" href="{% url 'rachais:create_group' %}">+ Criar Novo Grupo</a>
+      <div class="sidebar-groups">
+        {% if groups %}
+          {% for g in groups %}
+            <a class="sidebar-link" href="{% url 'rachais:group_detail' g.id %}">{{ g.name }}</a>
+          {% endfor %}
+        {% else %}
+          <span class="sidebar-empty">Você ainda não participa de nenhum grupo.</span>
+        {% endif %}
+      </div>
     </div>
   </aside>
 
-  <!-- Conteúdo principal -->
-  <section class="content">
-    <h1>Meus Grupos</h1>
-    <p class="subtitle">Crie um grupo para começar a dividir despesas.</p>
-
-    <div class="card">
-      <h3>Como funciona?</h3>
-      <p class="empty">Crie um grupo, convide participantes e registre as despesas. O RachAi calcula quem deve quanto.</p>
-      <div style="margin-top:12px">
-        <a class="btn" href="{% url 'rachais:create_group' %}">+ Criar Novo Grupo</a>
+  <section class="dashboard-main">
+    <div class="panel">
+      <div class="panel-header">
+        <div>
+          <h1 class="panel-title">Comece criando um grupo</h1>
+          <p class="panel-subtitle">Convide amigos e registre despesas compartilhadas.</p>
+        </div>
+        <a class="btn-primary" href="{% url 'rachais:create_group' %}">Criar grupo</a>
       </div>
+      <p class="panel-text">Crie um grupo para cada viagem, evento ou conta compartilhada. Adicione participantes, registre despesas e acompanhe quem deve o quê.</p>
     </div>
   </section>
 </div>

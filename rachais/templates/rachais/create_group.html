@@ -1,48 +1,46 @@
 {% extends "base.html" %}
-{% block content %}
-<div class="layout">
-  <!-- Lateral -->
-  <aside class="sidebar">
-    <h2>Seus Grupos</h2>
-    <a href="{% url 'rachais:create_group' %}" class="btn btn-block">+ Criar Novo Grupo</a>
 
-    <div class="group-list">
-      {% if groups %}
-        {% for g in groups %}
-          <a class="group-item" href="{% url 'rachais:group_detail' g.id %}">
-            {{ g.name }}
-          </a>
-        {% endfor %}
-      {% else %}
-        <div class="group-item" style="opacity:.7">Você ainda não participa de nenhum grupo.</div>
-      {% endif %}
+{% block content %}
+<div class="dashboard-shell">
+  <aside class="dashboard-sidebar">
+    <div class="sidebar-card">
+      <div class="sidebar-title">Seus Grupos</div>
+      <a class="sidebar-action" href="{% url 'rachais:create_group' %}">+ Criar Novo Grupo</a>
+      <div class="sidebar-groups">
+        {% if groups %}
+          {% for g in groups %}
+            <a class="sidebar-link" href="{% url 'rachais:group_detail' g.id %}">{{ g.name }}</a>
+          {% endfor %}
+        {% else %}
+          <span class="sidebar-empty">Você ainda não participa de nenhum grupo.</span>
+        {% endif %}
+      </div>
     </div>
   </aside>
 
-  <!-- Conteúdo principal -->
-  <section class="content">
+  <section class="dashboard-main">
     {% if messages %}
-      {% for m in messages %}
-        <div class="banner {% if m.tags %}banner-{{ m.tags }}{% endif %}">
-          {{ m }}
-        </div>
-      {% endfor %}
+      <div class="flash-stack">
+        {% for m in messages %}
+          <div class="flash flash-{{ m.tags|default:'info' }}">{{ m }}</div>
+        {% endfor %}
+      </div>
     {% endif %}
 
-    <h1>Criar novo grupo</h1>
-    <p class="subtitle">Dê um nome e comece a dividir despesas.</p>
-
-    <div class="card" style="margin-top:12px">
-      <form method="post">
+    <div class="panel">
+      <div class="panel-header">
+        <div>
+          <h1 class="panel-title">Criar novo grupo</h1>
+          <p class="panel-subtitle">Defina um nome e convide seus participantes.</p>
+        </div>
+      </div>
+      <form method="post" class="form-stack">
         {% csrf_token %}
-        <label for="name" class="block mb-2">Nome do Grupo</label>
-        <input id="name" name="name" type="text" maxlength="100"
-               placeholder="Ex: Viagem para a Praia"
-               class="input" required>
-
-        <div class="form-actions" style="margin-top:12px">
-          <button type="submit" class="btn">Criar</button>
-          <a href="{% url 'rachais:group_list' %}" class="btn btn-light">Cancelar</a>
+        <label class="form-label" for="name">Nome do grupo</label>
+        <input class="form-input" id="name" name="name" type="text" maxlength="100" placeholder="Ex.: Viagem para a Praia" value="{{ name|default:'' }}" required>
+        <div class="form-actions">
+          <a class="btn-secondary" href="{% url 'rachais:group_list' %}">Cancelar</a>
+          <button class="btn-primary" type="submit">Criar</button>
         </div>
       </form>
     </div>

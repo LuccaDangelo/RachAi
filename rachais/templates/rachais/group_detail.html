@@ -1,116 +1,98 @@
 {% extends "base.html" %}
-{% block content %}
-<div class="layout">
-  <!-- Lateral -->
-  <aside class="sidebar">
-    <h2>Seus Grupos</h2>
-    <a href="{% url 'rachais:create_group' %}" class="btn btn-block">+ Criar Novo Grupo</a>
 
-    <div class="group-list">
-      {% for g in groups %}
-        <a class="group-item {% if g.id == group.id %}active{% endif %}"
-           href="{% url 'rachais:group_detail' g.id %}">
-          {{ g.name }}
-        </a>
-      {% empty %}
-        <span class="muted">Você ainda não tem grupos.</span>
-      {% endfor %}
+{% block content %}
+<div class="dashboard-shell">
+  <aside class="dashboard-sidebar">
+    <div class="sidebar-card">
+      <div class="sidebar-title">Seus Grupos</div>
+      <a class="sidebar-action" href="{% url 'rachais:create_group' %}">+ Criar Novo Grupo</a>
+      <div class="sidebar-groups">
+        {% for g in groups %}
+          <a class="sidebar-link {% if g.id == group.id %}is-active{% endif %}" href="{% url 'rachais:group_detail' g.id %}">{{ g.name }}</a>
+        {% empty %}
+          <span class="sidebar-empty">Você ainda não participa de nenhum grupo.</span>
+        {% endfor %}
+      </div>
     </div>
   </aside>
 
-  <!-- Conteúdo -->
-  <section class="content">
+  <section class="dashboard-main">
     {% if messages %}
-      {% for m in messages %}
-        <div class="banner {% if m.tags %}banner-{{ m.tags }}{% endif %}">
-          {{ m }}
-        </div>
-      {% endfor %}
+      <div class="flash-stack">
+        {% for m in messages %}
+          <div class="flash flash-{{ m.tags|default:'info' }}">{{ m }}</div>
+        {% endfor %}
+      </div>
     {% endif %}
 
-    <!-- BOTÃO VOLTAR PARA CRIAR GRUPO -->
-    <div style="margin-bottom:10px">
-      <a href="{% url 'rachais:create_group' %}" class="btn btn-light">← Voltar para criar grupo</a>
-    </div>
-
-    <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
-      <div>
-        <h1>{{ group.name }}</h1>
-        <p class="subtitle">Adicione participantes e comece a registrar despesas</p>
-      </div>
-      <a href="{% url 'rachais:add_expense' group.id %}" class="btn">+ Adicionar Despesa</a>
-    </div>
-
-    <!-- PARTICIPANTES -->
-    <div class="card" style="margin-top:16px">
-      <h3>Participantes</h3>
-
-      <!-- Form de convite (username OU e-mail) -->
-      <form method="post" action="{% url 'rachais:add_participant' group.id %}" style="margin:8px 0 12px">
-        {% csrf_token %}
-        <label for="identifier">Username ou e-mail</label>
-        <input id="identifier" name="identifier" type="text" placeholder="ex.: joao ou joao@email.com" required>
-        <div class="form-actions">
-          <button class="btn btn-light" type="submit">+ Convidar Participante</button>
+    <div class="panel">
+      <div class="panel-header panel-header--between">
+        <div>
+          <h1 class="panel-title">{{ group.name }}</h1>
+          <p class="panel-subtitle">Adicione participantes e registre as despesas do grupo.</p>
         </div>
-      </form>
+        <a class="btn-primary" href="{% url 'rachais:add_expense' group.id %}">+ Adicionar despesa</a>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header panel-header--between">
+        <h2 class="panel-title">Participantes</h2>
+        <form class="inline-form" method="post" action="{% url 'rachais:add_participant' group.id %}">
+          {% csrf_token %}
+          <label class="sr-only" for="identifier">Adicionar participante</label>
+          <input class="inline-input" id="identifier" name="identifier" type="text" placeholder="Username ou e-mail" required>
+          <button class="btn-secondary" type="submit">+ Convidar</button>
+        </form>
+      </div>
 
       {% if participants %}
-        <ul style="list-style:none;padding:0;margin:8px 0 0;display:flex;flex-wrap:wrap;gap:8px">
+        <ul class="pill-list">
           {% for p in participants %}
-            <li class="group-item" style="display:inline-block;margin:0">
-              {{ p.display_name }}
-            </li>
+            <li class="pill">{{ p.display_name }}</li>
           {% endfor %}
         </ul>
       {% else %}
-        <p class="empty">Nenhum participante ainda</p>
+        <p class="panel-empty">Nenhum participante ainda.</p>
       {% endif %}
     </div>
 
-    <!-- DESPESAS -->
-    <div class="card">
-      <div style="display:flex;align-items:center;justify-content:space-between;">
-        <h3>Despesas</h3>
-        <a href="{% url 'rachais:add_expense' group.id %}" class="btn btn-light">+ Adicionar</a>
+    <div class="panel">
+      <div class="panel-header panel-header--between">
+        <h2 class="panel-title">Despesas</h2>
+        <a class="btn-secondary" href="{% url 'rachais:add_expense' group.id %}">+ Adicionar</a>
       </div>
 
       {% if expenses %}
-        <ul style="list-style:none;padding:0;margin:0">
+        <ul class="expense-list">
           {% for e in expenses %}
-            <li style="padding:12px 0;border-bottom:1px solid #eee">
-              <div style="display:flex;justify-content:space-between;align-items:center;">
+            <li class="expense-item">
+              <div class="expense-main">
                 <div>
-                  <div style="font-weight:600">{{ e.description }}</div>
-                  <div class="muted">
-                    Pago por {{ e.paid_by_name }}
-                  </div>
+                  <div class="expense-name">{{ e.description }}</div>
+                  <div class="expense-meta">Pago por {{ e.paid_by_name }}</div>
                 </div>
-                <div style="font-weight:700">R$ {{ e.amount }}</div>
+                <div class="expense-amount">R$ {{ e.amount }}</div>
               </div>
-
-              {% if e.split_list %}
-                <div class="muted" style="margin-top:6px">
+              <div class="expense-split">
+                {% if e.split_list %}
                   <strong>Divisão igual:</strong>
                   {% for s in e.split_list %}
-                    {{ s.name }} deve R$ {{ s.amount }}{% if not forloop.last %};{% else %}.{% endif %}
+                    {{ s.name }} deve R$ {{ s.amount }}{% if not forloop.last %}; {% else %}.{% endif %}
                   {% endfor %}
-                </div>
-              {% else %}
-                <div class="muted" style="margin-top:6px">
-                  <strong>Divisão igual:</strong> não há outros participantes para dividir.
-                </div>
-              {% endif %}
+                {% else %}
+                  <strong>Divisão igual:</strong> ninguém para dividir ainda.
+                {% endif %}
+              </div>
             </li>
           {% endfor %}
         </ul>
-
-        <div style="margin-top:10px;text-align:right">
-          <span class="muted" style="margin-right:6px">Total do grupo:</span>
-          <span style="font-size:1.125rem;font-weight:800">R$ {{ total }}</span>
+        <div class="expense-total">
+          <span>Total do grupo:</span>
+          <strong>R$ {{ total }}</strong>
         </div>
       {% else %}
-        <p class="empty">Nenhuma despesa adicionada</p>
+        <p class="panel-empty">Nenhuma despesa adicionada.</p>
       {% endif %}
     </div>
   </section>

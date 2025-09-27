@@ -1,47 +1,65 @@
 {% extends "base.html" %}
+{% load static %}
+
+{% block title %}Criar conta · RachAi{% endblock %}
+{% block body_class %}auth-body auth-body--signup{% endblock %}
+
+{% block topbar_actions %}
+  <a class="top-link top-link--ghost" href="{% url 'accounts:login' %}">Entrar</a>
+{% endblock %}
+
 {% block content %}
-<div class="max-w-2xl mx-auto p-6">
-  <div class="card">
-    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-      <span style="width:10px;height:10px;background:#3b82f6;border-radius:50%;display:inline-block"></span>
-      <span class="muted">RachAí</span>
+<div class="auth-shell">
+  <div class="auth-card auth-card--signup">
+    <div class="auth-brand">
+      <img class="auth-logo" src="{% static 'rachai.png' %}" alt="Logotipo RachAi">
+      <span class="auth-brand-name">RachAi</span>
     </div>
 
-    <h1>Criar conta</h1>
-    <p class="subtitle">Preencha seus dados para começar</p>
+    <h1 class="auth-title">Criar conta</h1>
+    <p class="auth-subtitle">Preencha seus dados para começar</p>
 
     {% if messages %}
-      {% for m in messages %}
-        <div class="banner {% if m.tags %}banner-{{ m.tags }}{% endif %}">{{ m }}</div>
-      {% endfor %}
+      <div class="auth-messages">
+        {% for m in messages %}
+          <div class="auth-message {{ m.tags }}">{{ m }}</div>
+        {% endfor %}
+      </div>
     {% endif %}
 
-    <form method="post" style="margin-top:12px">
+    <form method="post" class="auth-form">
       {% csrf_token %}
-
-      <label for="first_name">Primeiro nome</label>
-      <input id="first_name" name="first_name" type="text" placeholder="Ex.: Ana" required>
-
-      <label for="email" style="margin-top:8px">Email</label>
-      <input id="email" name="email" type="email" placeholder="voce@email.com" required>
-
-      <label for="password" style="margin-top:8px">Senha</label>
-      <input id="password" name="password" type="password" placeholder="********" required>
-
-      <label for="confirm_password" style="margin-top:8px">Confirmar senha</label>
-      <input id="confirm_password" name="confirm_password" type="password" placeholder="********" required>
-
-      <div class="muted" style="margin:10px 0 12px">
-        Ao continuar, você aceita os termos de uso.
+      <div class="field">
+        <label class="auth-label" for="first_name">Nome</label>
+        <input class="auth-input" id="first_name" name="first_name" type="text" placeholder="Ex.: Ana Silva" required>
       </div>
 
-      <button class="btn" type="submit">Cadastrar</button>
+      <div class="field">
+        <label class="auth-label" for="email">Email</label>
+        <input class="auth-input" id="email" name="email" type="email" placeholder="exemplo@email.com" required>
+      </div>
+
+      <div class="field">
+        <label class="auth-label" for="password">Senha</label>
+        <input class="auth-input" id="password" name="password" type="password" placeholder="********" required>
+      </div>
+
+      <div class="field">
+        <label class="auth-label" for="confirm_password">Confirmar senha</label>
+        <input class="auth-input" id="confirm_password" name="confirm_password" type="password" placeholder="********" required>
+      </div>
+
+      <p class="auth-terms">Ao continuar, você aceita os termos do serviço.</p>
+
+      <button class="auth-button primary" type="submit">Cadastrar</button>
+
+      <div class="auth-switch">
+        <span>Já tem conta?</span>
+        <a class="auth-switch-link" href="{% url 'accounts:login' %}">Entrar</a>
+      </div>
     </form>
 
-    <div class="muted" style="margin-top:10px">
-      Já tem conta?
-      <a href="{% url 'accounts:login' %}">Entrar</a>
-    </div>
+    <p class="auth-footnote">Interação (Protótipo): Botão "Cadastrar" ⇒ redireciona para Tela Inicial</p>
   </div>
 </div>
 {% endblock %}
