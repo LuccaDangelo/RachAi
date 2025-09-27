@@ -1,65 +1,65 @@
-"""
-Django settings for rachai project.
-"""
-from pathlib import Path
+# rachai/settings.py
+
 import os
-from dotenv import load_dotenv  
+from pathlib import Path
+from dotenv import load_dotenv
+from django.core.exceptions import ImproperlyConfigured
 
 # --------------------------------------------------
-# Diretórios base
+# Diretórios e Carregamento de Variáveis de Ambiente
 # --------------------------------------------------
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# --------------------------------------------------
-# Carregamento de variáveis de ambiente
-# --------------------------------------------------
+# Carrega o arquivo .env se ele existir (para desenvolvimento local)
 env_path = BASE_DIR / '.env'
 if env_path.exists():
-    load_dotenv(env_path)
+    load_dotenv(dotenv_path=env_path)
 
 # --------------------------------------------------
-# Lógica de ambiente (Feature Flag)
+# Lógica de Ambiente (Desenvolvimento vs. Produção)
 # --------------------------------------------------
-TARGET_ENV = os.getenv('TARGET_ENV')
-NOT_PROD = not (TARGET_ENV and TARGET_ENV.lower().startswith('prod'))
+# A variável 'TARGET_ENV' deve ser definida como 'production' no seu Azure App Service.
+TARGET_ENV = os.getenv('TARGET_ENV', 'development')
+IS_PRODUCTION = TARGET_ENV.lower().startswith('prod')
 
-if NOT_PROD:
-    # -------------------- DESENVOLVIMENTO --------------------
+# --------------------------------------------------
+# Configurações de Segurança e Core
+# --------------------------------------------------
+if not IS_PRODUCTION:
+    # --- AMBIENTE DE DESENVOLVIMENTO ---
+    SECRET_KEY = 'django-insecure-sua-chave-de-desenvolvimento-aqui'
     DEBUG = True
-    SECRET_KEY = 'django-insecure-+(oe-3=($r76(x6@=0+)x*$lya)5jw)e@3!6!#zf*0@dg##)8_'
     ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
-
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
-    }
+    
+    # Para desenvolvimento, os e-mails são impressos no console.
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 else:
-    # -------------------- PRODUÇÃO (Azure) --------------------
+    # --- AMBIENTE DE PRODUÇÃO (AZURE) ---
     SECRET_KEY = os.getenv('SECRET_KEY')
+    if not SECRET_KEY:
+        raise ImproperlyConfigured("A SECRET_KEY não foi definida no ambiente de produção!")
+
     DEBUG = os.getenv('DEBUG', '0').lower() in ['true', 't', '1']
+    
+    # Ex: 'meuapp.azurewebsites.net www.meudominio.com'
     ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '').split()
+    if not ALLOWED_HOSTS:
+         raise ImproperlyConfigured("ALLOWED_HOSTS não foi definido no ambiente de produção!")
+
+    # Ex: 'https://meuapp.azurewebsites.net https://www.meudominio.com'
     CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', '').split()
+    if not CSRF_TRUSTED_ORIGINS:
+        raise ImproperlyConfigured("CSRF_TRUSTED_ORIGINS não foi definido no ambiente de produção!")
 
-    SECURE_SSL_REDIRECT = os.getenv('SECURE_SSL_REDIRECT', '0').lower() in ['true', 't', '1']
-    if SECURE_SSL_REDIRECT:
-        SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': os.environ.get('DBNAME'),
-            'HOST': os.environ.get('DBHOST'),
-            'USER': os.environ.get('DBUSER'),
-            'PASSWORD': os.environ.get('DBPASS'),
-            'OPTIONS': {'sslmode': 'require'},
-        }
-    }
+    # Configurações de segurança para HTTPS
+    SECURE_SSL_REDIRECT = True
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
 
 # --------------------------------------------------
-# Aplicativos instalados
+# Aplicativos Instalados
 # --------------------------------------------------
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -68,7 +68,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # Para servir arquivos estáticos em produção
     'whitenoise.runserver_nostatic',
+    # Seus apps
     'rachais',
 ]
 
@@ -77,6 +79,7 @@ INSTALLED_APPS = [
 # --------------------------------------------------
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    # WhiteNoise Middleware deve vir logo após o SecurityMiddleware
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -87,10 +90,14 @@ MIDDLEWARE = [
 ]
 
 # --------------------------------------------------
-# URLs / WSGI
+# URLs e WSGI
 # --------------------------------------------------
 ROOT_URLCONF = 'rachai.urls'
+WSGI_APPLICATION = 'rachai.wsgi.application'
 
+# --------------------------------------------------
+# Templates
+# --------------------------------------------------
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -98,6 +105,7 @@ TEMPLATES = [
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
+                'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
@@ -106,10 +114,32 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'rachai.wsgi.application'
+# --------------------------------------------------
+# Banco de Dados
+# --------------------------------------------------
+if IS_PRODUCTION:
+    # Configuração para PostgreSQL na Azure
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.environ.get('DBNAME'),
+            'HOST': os.environ.get('DBHOST'),
+            'USER': os.environ.get('DBUSER'),
+            'PASSWORD': os.environ.get('DBPASS'),
+            'OPTIONS': {'sslmode': 'require'},
+        }
+    }
+else:
+    # Configuração para SQLite em desenvolvimento
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 # --------------------------------------------------
-# Validação de senha
+# Validação de Senha e Autenticação
 # --------------------------------------------------
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
@@ -118,11 +148,9 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
-# --------------------------------------------------
-# Autenticação
-# --------------------------------------------------
+# SUAS CONFIGURAÇÕES DE AUTENTICAÇÃO PERSONALIZADAS
 AUTHENTICATION_BACKENDS = [
-    'rachais.backends.EmailOrUsernameModelBackend',  
+    'rachais.backends.EmailOrUsernameModelBackend',
     'django.contrib.auth.backends.ModelBackend',
 ]
 
@@ -131,7 +159,7 @@ LOGIN_REDIRECT_URL = 'rachais:group_list'
 LOGOUT_REDIRECT_URL = 'accounts:login'
 
 # --------------------------------------------------
-# Internacionalização e fuso horário
+# Internacionalização
 # --------------------------------------------------
 LANGUAGE_CODE = 'pt-br'
 TIME_ZONE = 'America/Recife'
@@ -139,25 +167,18 @@ USE_I18N = True
 USE_TZ = True
 
 # --------------------------------------------------
-# Arquivos estáticos (WhiteNoise)
+# Arquivos Estáticos (CSS, JavaScript, Imagens)
 # --------------------------------------------------
-STATIC_URL = os.environ.get('DJANGO_STATIC_URL', '/static/')
-
-STATIC_ROOT = BASE_DIR / 'staticfiles'
-
-
+# STATIC_URL = "static/"
+STATIC_URL = os.environ.get('DJANGO_STATIC_URL', "/static/")
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = [
     BASE_DIR / 'assets',
 ]
-
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-
-# --------------------------------------------------
-# Email
-# --------------------------------------------------
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# Armazenamento otimizado para produção com WhiteNoise
+STATICFILES_STORAGE = ('whitenoise.storage.CompressedManifestStaticFilesStorage')
 
 # --------------------------------------------------
-# Padrão de chave para modelos
+# Configuração Padrão
 # --------------------------------------------------
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
