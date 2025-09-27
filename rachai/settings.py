@@ -39,11 +39,11 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'rachai.urls'
 
-# Templates
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],   # pasta /templates na raiz
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -57,7 +57,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'rachai.wsgi.application'
 
-# Database (SQLite)
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
