@@ -30,15 +30,18 @@ jobs:
           source venv/bin/activate
       
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: pip install -r rachai/requirements.txt # <-- AJUSTE FINAL FEITO AQUI
       
       - name: Run collectstatic
-        run: python manage.py collectstatic --noinput
+        run: |
+          cd rachai/ # Entra na pasta para encontrar o manage.py
+          python manage.py collectstatic --noinput
+          cd .. # Volta para a raiz
       
       - name: Cleaning testing files
         run: |
-          if [ -f db.sqlite3 ]; then rm db.sqlite3; fi
-          if [ -f .env ]; then rm .env; fi
+          if [ -f rachai/db.sqlite3 ]; then rm rachai/db.sqlite3; fi
+          if [ -f rachai/.env ]; then rm rachai/.env; fi
       
       - name: Upload artifact for deployment jobs
         uses: actions/upload-artifact@v4
