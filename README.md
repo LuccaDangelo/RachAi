@@ -33,10 +33,10 @@ As histórias de usuário foram documentadas detalhadamente, incluindo critério
 O projeto está sendo gerenciado utilizando a metodologia Scrum.
 
 **Backlog do Produto:**
-![Print do Backlog](.assets/backlog.png)
+![Print do Backlog](assets/backlog.png)
 
 **Quadro da Sprint 1:**
-![Print do Quadro da Sprint](.assets/quadro_sprint.png)
+![Print do Quadro da Sprint](assets/quadro_sprint.png)
 
 ### 3. Protótipo de Baixa Fidelidade (Figma)
 Foi desenvolvido um protótipo de baixa fidelidade para visualizar os fluxos de navegação.
@@ -58,7 +58,9 @@ Vídeos foram gravados para demonstrar tanto o protótipo de baixa fidelidade qu
 
 ## Equipe
 
-- [Rafael Coutinho Lima] - rcl4@cesar.school
-- [Lucca D'angelo]- lada@cesar.school
-- [Nome do Membro 3](Link do GitHub) - email@cesar.school
-- [Nome do Membro 4](Link do GitHub) - email@cesar.school
+- [João Eduardo Azevedo de Andrade](Link do GitHub) - jeaa@cesar.school
+- [Lucca Albuquerque D'Angelo](Link do GitHub) - lada@cesar.school
+- [Marcelo Asfora de Menezes](Link do GitHub) - mam@cesar.school
+- [Pedro Coutinho da Silva](Link do GitHub) - pcs4@cesar.school
+- [Rafael Coutinho Lima](Link do GitHub) - rcl4@cesar.school
+- [Guilherme Tolentino Leitão de Melo](Link do GitHub) - gtlm@cesar.school
