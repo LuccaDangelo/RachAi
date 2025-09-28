@@ -19,7 +19,7 @@ jobs:
     - name: Set up Python version
       uses: actions/setup-python@v5
       with:
-        python-version: '3.11' # Confirme se esta é a versão correta do Python para seu projeto
+        python-version: '3.11'
 
     - name: Create and start virtual environment
       run: |
@@ -27,15 +27,12 @@ jobs:
         source venv/bin/activate
     
     - name: Install dependencies
-      # Comando corrigido para instalar a partir do requirements.txt na raiz
       run: pip install -r requirements.txt
     
     - name: Run collectstatic
-      # Este comando é essencial para que o Django encontre seus arquivos estáticos em produção
       run: python manage.py collectstatic --noinput
     
     - name: Cleaning unnecessary files
-      # Remove arquivos que não precisam ir para o ambiente de produção
       run: |
         if [ -f db.sqlite3 ]; then rm db.sqlite3; fi
         if [ -f .env ]; then rm .env; fi
@@ -55,7 +52,7 @@ jobs:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     permissions:
-      id-token: write # Necessário para o login OIDC com Azure
+      id-token: write
 
     steps:
     - name: Download artifact from build job
@@ -75,7 +72,6 @@ jobs:
       id: deploy-to-webapp
       uses: azure/webapps-deploy@v3
       with:
-        app-name: 'Rachaiapp' # Verifique se este é o nome exato do seu App Service na Azure
+        app-name: 'Rachaiapp'
         slot-name: 'Production'
-        package: . # O ponto (.) indica para o Azure usar o diretório atual como pacote de deploy
-
+        package: .
