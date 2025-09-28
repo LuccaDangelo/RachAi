@@ -59,7 +59,7 @@ Foi desenvolvido um protótipo de baixa fidelidade para visualizar os fluxos de 
   ![Quadro da Sprint 2](assets/quadro_sprint2.png)
 
 - **Bug Tracker:**
-  ![Bug Tracker](assets/issues_bugtracker.png)
+  ![Bug Tracker](assets/Issues_bugtracker.png)
 
 - **Programação em Par:**
   Para o desenvolvimento das histórias de usuário desta entrega, a equipe adotou a metodologia de programação em par. Essa abordagem facilitou a colaboração, a troca de conhecimento e a resolução de problemas de forma mais eficiente. As duplas foram organizadas da seguinte forma:
@@ -75,8 +75,8 @@ Foi desenvolvido um protótipo de baixa fidelidade para visualizar os fluxos de 
 ## Equipe
 
 - [João Eduardo Azevedo de Andrade] - jeaa@cesar.school
-- [Lucca Albuquerque D'Angelo] - lada@cesar.school
+- [Lucca Albuquerque D'Angelo]- lada@cesar.school
 - [Marcelo Asfora de Menezes] - mam@cesar.school
-- [Pedro Coutinho da Silva] - pcs4@cesar.school
+- [Pedro Coutinho da Silva]- pcs4@cesar.school
 - [Rafael Coutinho Lima] - rcl4@cesar.school
 - [Guilherme Tolentino Leitão de Melo] - gtlm@cesar.school
