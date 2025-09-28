@@ -26,7 +26,7 @@ O projeto está sendo gerenciado utilizando a metodologia Scrum. Abaixo estão o
 
 ### 3. Protótipo de Baixa Fidelidade (Figma)
 
-Foi desenvolvido um protótipo de baixa fidelidade para visualizar os fluxos de navegação principais do aplicativo. O protótipo foca na usabilidade e na estrutura das telas.
+Foi desenvolvido um protótipo de baixa fidelidade para visualizar os fluxos de navegação principais do aplicativo/site. O protótipo foca na usabilidade e na estrutura das telas.
 
 * **[➡️ Acesse o protótipo no Figma aqui](https://www.figma.com/design/iWuUijDxGKfmdeoyyv9INg/RachA%C3%AD-Lo-fi?node-id=106-3&p=f&t=bBpdtPYtQnRTNjag-0)**
 
@@ -35,5 +35,7 @@ Foi desenvolvido um protótipo de baixa fidelidade para visualizar os fluxos de 
 Um screencast foi gravado para demonstrar a navegação e as funcionalidades presentes no protótipo de baixa fidelidade.
 
 * **[🎥 Assista ao screencast no YouTube aqui](https://youtu.be/dA_j2NWCX2k)**
+
+* **[🎥 Assista ao screencast do site funcional no YouTube aqui](https://youtu.be/n-TJ8coBneE)**
 
 ---
