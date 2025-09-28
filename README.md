@@ -48,7 +48,7 @@ Foi desenvolvido um protótipo de baixa fidelidade para visualizar os fluxos de 
 <details>
 <summary><h2>Segunda Entrega</h2></summary>
 
-- **Site em Produção:** [Link para o site] - *Login: [usuário] || Senha: [senha]*
+- **Site em Produção:** [https://rachaiapp.azurewebsites.net/](https://rachaiapp.azurewebsites.net/) - *Login: [usuário] || Senha: [senha]*
 
 - **Screencast:** [🎥 Assista ao screencast do site funcional no YouTube aqui](https://youtu.be/n-TJ8coBneE)
 
@@ -56,4 +56,27 @@ Foi desenvolvido um protótipo de baixa fidelidade para visualizar os fluxos de 
   *Backlog Sprint 2:*
   ![Backlog da Sprint 2](assets/backlog_sprint2.png)
   *Quadro da Sprint 2:*
-  ![Quadro da Sprint 2](assets/quadro_
+  ![Quadro da Sprint 2](assets/quadro_sprint2.png)
+
+- **Bug Tracker:**
+  ![Bug Tracker](assets/issues_bugtracker.png)
+
+- **Programação em Par:**
+  Para o desenvolvimento das histórias de usuário desta entrega, a equipe adotou a metodologia de programação em par. Essa abordagem facilitou a colaboração, a troca de conhecimento e a resolução de problemas de forma mais eficiente. As duplas foram organizadas da seguinte forma:
+
+  * **Rafael Coutinho Lima** e **Guilherme Tolentino Leitão de Melo**
+  * **João Eduardo Azevedo de Andrade** e **Lucca Albuquerque D'Angelo**
+  * **Marcelo Asfora de Menezes** e **Pedro Coutinho da Silva**
+
+  Cada dupla ficou responsável por desenvolver uma história de usuário, garantindo que o código fosse revisado e construído em conjunto, o que resultou em uma maior qualidade na entrega.
+
+</details>
+
+## Equipe
+
+- [João Eduardo Azevedo de Andrade](Link do GitHub) - jeaa@cesar.school
+- [Lucca Albuquerque D'Angelo](Link do GitHub) - lada@cesar.school
+- [Marcelo Asfora de Menezes](Link do GitHub) - mam@cesar.school
+- [Pedro Coutinho da Silva](Link do GitHub) - pcs4@cesar.school
+- [Rafael Coutinho Lima](Link do GitHub) - rcl4@cesar.school
+- [Guilherme Tolentino Leitão de Melo](Link do GitHub) - gtlm@cesar.school
