@@ -30,10 +30,15 @@ jobs:
           source venv/bin/activate
       
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: pip install RachAi/-r requirements.txt
         
       # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
-
+      - name: Cleaning testing files
+        run: |
+          cd RachAi/
+          rm db.sqlite3
+          rm .env
+          cd ..
       - name: Upload artifact for deployment jobs
         uses: actions/upload-artifact@v4
         with:
@@ -61,11 +66,17 @@ jobs:
           client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_3572C8220008463E9ACB8479749BAFDD }}
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_B6B3B28087964946BF0316D4BFF7275A }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_F54F637BBCBA4EABBD4B1168634AE9CF }}
-
+      - name: Zip artifact for deployment
+        run: |
+          cd RachAi/
+          zip release.zip ./* -r
+          cd ..
+          mv RachAi/release.zip .
       - name: 'Deploy to Azure Web App'
         uses: azure/webapps-deploy@v3
         id: deploy-to-webapp
         with:
           app-name: 'rachaiapp'
           slot-name: 'Production'
+
           
