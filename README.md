@@ -46,21 +46,14 @@ Foi desenvolvido um protótipo de baixa fidelidade para visualizar os fluxos de 
 </details>
 
 <details>
-<summary><h2>Segunda Entrega - Demonstrações em Vídeo</h2></summary>
+<summary><h2>Segunda Entrega</h2></summary>
 
-### Screencasts
-Vídeos foram gravados para demonstrar tanto o protótipo de baixa fidelidade quanto o site funcional.
+- **Site em Produção:** [Link para o site] - *Login: [usuário] || Senha: [senha]*
 
-- [🎥 Assista ao screencast do protótipo no YouTube aqui](https://youtu.be/dA_j2NWCX2k)
-- [🎥 Assista ao screencast do site funcional no YouTube aqui](https://youtu.be/n-TJ8coBneE)
+- **Screencast:** [🎥 Assista ao screencast do site funcional no YouTube aqui](https://youtu.be/n-TJ8coBneE)
 
-</details>
-
-## Equipe
-
-- [João Eduardo Azevedo de Andrade](Link do GitHub) - jeaa@cesar.school
-- [Lucca Albuquerque D'Angelo](Link do GitHub) - lada@cesar.school
-- [Marcelo Asfora de Menezes](Link do GitHub) - mam@cesar.school
-- [Pedro Coutinho da Silva](Link do GitHub) - pcs4@cesar.school
-- [Rafael Coutinho Lima](Link do GitHub) - rcl4@cesar.school
-- [Guilherme Tolentino Leitão de Melo](Link do GitHub) - gtlm@cesar.school
+- **Quadro da Sprint 2 (Jira):**
+  *Backlog Sprint 2:*
+  ![Backlog da Sprint 2](assets/backlog_sprint2.png)
+  *Quadro da Sprint 2:*
+  ![Quadro da Sprint 2](assets/quadro_
