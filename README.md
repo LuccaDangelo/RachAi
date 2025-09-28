@@ -74,9 +74,9 @@ Foi desenvolvido um protótipo de baixa fidelidade para visualizar os fluxos de 
 
 ## Equipe
 
-- [João Eduardo Azevedo de Andrade](Link do GitHub) - jeaa@cesar.school
-- [Lucca Albuquerque D'Angelo](Link do GitHub) - lada@cesar.school
-- [Marcelo Asfora de Menezes](Link do GitHub) - mam@cesar.school
-- [Pedro Coutinho da Silva](Link do GitHub) - pcs4@cesar.school
-- [Rafael Coutinho Lima](Link do GitHub) - rcl4@cesar.school
-- [Guilherme Tolentino Leitão de Melo](Link do GitHub) - gtlm@cesar.school
+- [João Eduardo Azevedo de Andrade] - jeaa@cesar.school
+- [Lucca Albuquerque D'Angelo] - lada@cesar.school
+- [Marcelo Asfora de Menezes] - mam@cesar.school
+- [Pedro Coutinho da Silva] - pcs4@cesar.school
+- [Rafael Coutinho Lima] - rcl4@cesar.school
+- [Guilherme Tolentino Leitão de Melo] - gtlm@cesar.school
