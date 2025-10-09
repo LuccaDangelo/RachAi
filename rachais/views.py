@@ -1,5 +1,8 @@
 from decimal import Decimal, InvalidOperation
+import decimal
 from typing import Optional
+from collections import defaultdict
+from types import SimpleNamespace
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
@@ -53,6 +56,65 @@ def _sidebar_groups_qs(user: User):
         .prefetch_related("participants__user")
     )
 
+def _calculate_balances(group):
+    participants = list(group.participants.select_related("user").all())
+    expenses = list(group.expenses.select_related("paid_by").all())
+
+    if not participants:
+        return{}
+    
+    n_participants = len(participants)
+    balances = defaultdict(Decimal)
+
+    for expense in expenses:
+        if n_participants <= 0:
+            continue
+
+        share = (expense.amount / Decimal(n_participants)).quantize(Decimal("0.01"))
+
+
+        balances[expense.paid_by.id] += expense.amount
+
+        for participant in participants:
+            balances[participant.user.id] -= share
+    
+    return dict(balances)
+
+def _calculate_settlements(balances, participants_qs):
+    user_map = {p.user.id: p.user for p in participants_qs}
+    creditors = []
+    debtors = []
+
+    for user_id, balance in balances.items():
+        if balance > Decimal("0.01"):
+            creditors.append([user_id, balance])
+        elif balance < Decimal("-0.01"):
+            debtors.append([user_id, -balance])
+    
+    settlements = []
+    i = j = 0
+
+    while i < len(creditors) and j < len(debtors):
+        creditor_id, credit = creditors[i]
+        debtor_id, debt = debtors[j]
+        transfer = min(credit, debt).quantize(Decimal("0.01"))
+
+        settlements.append(SimpleNamespace(
+            person_from=user_map[debtor_id],
+            person_to=user_map[creditor_id],
+            amount=transfer,  
+        ))
+
+        creditors[i][1] -= transfer
+        debtors[j][1] -= transfer
+
+        if creditors[i][1] < Decimal("0.01"):
+            i+=1
+        if debtors[j][1] < Decimal("0.01"):
+            j+=1
+    
+    return settlements
+
 
 # ---------------------- VIEWS ---------------------- #
 
@@ -74,7 +136,18 @@ def group_detail(request, group_id):
         setattr(p, "display_name", _display_name(p.user))
 
     total = sum((e.amount for e in expenses), Decimal("0"))
+    balances = _calculate_balances(group)
+    settlements = _calculate_settlements(balances, participants)
 
+    for s in settlements:
+        setattr(s, "from_name", _display_name(s.person_from))
+        setattr(s, "to_name", _display_name(s.person_to))
+
+    for participant in participants:
+        balance = balances.get(participant.user.id, Decimal("0"))
+        setattr(participant, "balance", balance)
+        setattr(participant, "balance_abs", balance.copy_abs())
+    
     users_in_group = [p.user for p in participants]
     n_participants = len(users_in_group)
 
@@ -98,6 +171,7 @@ def group_detail(request, group_id):
             "expenses": expenses,
             "participants": participants,
             "total": total,
+            "settlements": settlements,
         },
     )
 

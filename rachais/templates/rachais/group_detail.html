@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load l10n %}
 
 {% block content %}
 <div class="dashboard-shell">
@@ -56,6 +57,50 @@
         <p class="panel-empty">Nenhum participante ainda.</p>
       {% endif %}
     </div>
+
+    <div class="panel">
+      <div class="panel-header">
+        <h2 class="panel-title">Resumo Consolidado</h2>
+      </div>
+
+      {% if settlements %}
+        <div class="summary-info">
+          <p><strong>Transferências sugeridas:</strong></p>
+          <ul class="settlement-list">
+            {% for s in settlements %}
+              <li class="settlement-item">
+                <span class="settlement-debtor">{{ s.from_name }}</span>
+                deve
+                <span class="settlement-amount">R$ {{ s.amount }}</span>
+                para
+                <span class="settlement-creditor">{{ s.to_name }}</span>
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+
+        <div class="balance-summary">
+          <p><strong>Saldo individual:</strong></p>
+          <ul class="balance-list">
+            {% for participant in participants %}
+              <li class="balance-item">
+                <span class="balance-name">{{ participant.display_name }}:</span>
+                {% if participant.balance > 0 %}
+                  <span class="balance-positive">R$ {{ participant.balance|localize }}</span> a receber
+                {% elif participant.balance < 0 %}
+                  <span class="balance-negative">R$ {{ participant.balance_abs|localize }}</span> a pagar
+                {% else %}
+                  <span class="balance-zero">R$ 0,00</span> quite
+                {% endif %}
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+      {% else %}
+        <p class="panel-empty">Nenhuma dívida no momento. Tudo certo por aqui!</p>
+      {% endif %}
+    </div>
+
 
     <div class="panel">
       <div class="panel-header panel-header--between">
