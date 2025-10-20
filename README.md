@@ -16,6 +16,7 @@ RachAi é um aplicativo desenvolvido para simplificar a divisão de despesas ent
 
 - [Histórias de Usuário](https://docs.google.com/document/d/1YHw_6g5my2Kra5os0ZGiJ8zZ1qnXhpiZcFE_YLekO64/edit?usp=sharing)
 - [Protótipo de Baixa Fidelidade (Figma)](https://www.figma.com/design/iWuUijDxGKfmdeoyyv9INg/RachA%C3%AD-Lo-fi?node-id=106-3&p=f&t=bBpdtPYtQnRTNjag-0)
+- [Link para o JIRA (gestão do projeto)](https://jeaateam.atlassian.net/jira/software/projects/RAI/boards/34)
 - [Screencast de Apresentação do Protótipo (Figma)](https://youtu.be/dA_j2NWCX2k)
 - [Screencast do site funcional](https://youtu.be/n-TJ8coBneE)
 
