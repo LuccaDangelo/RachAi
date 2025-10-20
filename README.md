@@ -82,6 +82,8 @@ O projeto continua sendo gerenciado utilizando a metodologia Scrum.
 
 **Quadro da Sprint 3:**
 ![Print do Quadro da Sprint 3](assets/quadro_sprint3.png)
+**Quadro do BackLog 3:**
+![Print do Backlog 3](assets/backlog3.png)
 
 ### Screencasts
 - **Testes Automatizados:** [🎥 Assista ao screencast dos testes automatizados aqui](INSIRA_O_LINK_AQUI)
