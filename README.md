@@ -19,6 +19,8 @@ RachAi é um aplicativo desenvolvido para simplificar a divisão de despesas ent
 - [Link para o JIRA (gestão do projeto)](https://jeaateam.atlassian.net/jira/software/projects/RAI/boards/34)
 - [Screencast de Apresentação do Protótipo (Figma)](https://youtu.be/dA_j2NWCX2k)
 - [Screencast do site funcional](https://youtu.be/n-TJ8coBneE)
+- [Screencast de Testes Automatizados (Entrega 3)](INSIRA_O_LINK_AQUI)
+- [Screencast das Novas Histórias de Usuário (Entrega 3)](INSIRA_O_LINK_AQUI)
 
 </details>
 
@@ -62,16 +64,31 @@ Foi desenvolvido um protótipo de baixa fidelidade para visualizar os fluxos de 
 - **Bug Tracker:**
   ![Bug Tracker](assets/Issues_bugtracker.png)
 
-- **Programação em Par:**
-  Para o desenvolvimento das histórias de usuário desta entrega, a equipe adotou a metodologia de programação em par. Essa abordagem facilitou a colaboração, a troca de conhecimento e a resolução de problemas de forma mais eficiente. As duplas foram organizadas da seguinte forma:
-
+- **Colaboração na Prática: Nosso Desenvolvimento em Par:**
+  Nesta entrega, nossa grande aposta foi na programação em par. Acreditamos que "duas cabeças pensam melhor que uma", e essa abordagem fez toda a diferença. Trabalhando lado a lado, conseguimos discutir ideias em tempo real, revisar o código no momento em que era escrito e encontrar soluções mais criativas para os desafios. O resultado não foi apenas um código mais limpo e com menos bugs, mas também um time mais integrado e um aprendizado muito maior para todos.
+  
+  As duplas foram organizadas da seguinte forma:
   * **Rafael Coutinho Lima** e **Guilherme Tolentino Leitão de Melo**
   * **João Eduardo Azevedo de Andrade** e **Lucca Albuquerque D'Angelo**
   * **Marcelo Asfora de Menezes** e **Pedro Coutinho da Silva**
 
-  Cada dupla ficou responsável por desenvolver uma história de usuário, garantindo que o código fosse revisado e construído em conjunto, o que resultou em uma maior qualidade na entrega.
+</details>
+
+<details>
+<summary><h2>Terceira Entrega</h2></summary>
+
+### Gerenciamento Ágil (JIRA)
+O projeto continua sendo gerenciado utilizando a metodologia Scrum.
+
+**Quadro da Sprint 3:**
+![Print do Quadro da Sprint 3](assets/quadro_sprint3.png)
+
+### Screencasts
+- **Testes Automatizados:** [🎥 Assista ao screencast dos testes automatizados aqui](INSIRA_O_LINK_AQUI)
+- **Novas Histórias de Usuário:** [🎥 Assista ao screencast das novas funcionalidades aqui](INSIRA_O_LINK_AQUI)
 
 </details>
+
 
 ## Equipe
 
