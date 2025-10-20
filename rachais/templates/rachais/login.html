@@ -1,29 +1,58 @@
+{% extends "rachais/base.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8" />
-  <title>Bem-vindo ao RachAí</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="stylesheet" href="{% static 'rachais/css/style.css' %}">
-</head>
-<body>
-  <div class="container" style="text-align:center;">
-    <h1>RachAí</h1>
-    <p class="lead">Bem-vindo! Divida suas contas de forma fácil e transparente.</p>
 
-    <div class="home-actions">
-      <a class="button" href="{% url 'accounts:login' %}">Entrar</a>
-      <a class="button" href="{% url 'accounts:signup' %}">Cadastrar</a>
+{% block title %}Entrar · RachAi{% endblock %}
+{% block body_class %}auth-body auth-body--login{% endblock %}
+
+{% block topbar_actions %}
+  <a class="top-link top-link--ghost" href="{% url 'accounts:signup' %}">Cadastrar</a>
+{% endblock %}
+
+{% block content %}
+<div class="auth-shell">
+  <div class="auth-card auth-card--login">
+    <div class="auth-brand">
+      <img class="auth-logo" src="{% static 'rachai.png' %}" alt="Logotipo RachAi">
+      <span class="auth-brand-name">RachAi</span>
     </div>
 
+    <h1 class="auth-title">Entrar na sua conta</h1>
+    <p class="auth-subtitle">Acesse seus grupos e despesas</p>
+
     {% if messages %}
-      <ul class="messages">
-        {% for message in messages %}
-          <li>{{ message }}</li>
+      <div class="auth-messages">
+        {% for m in messages %}
+          <div class="auth-message {{ m.tags }}">{{ m }}</div>
         {% endfor %}
-      </ul>
+      </div>
     {% endif %}
+
+    <form method="post" class="auth-form">
+      {% csrf_token %}
+      {% if request.GET.next %}
+        <input type="hidden" name="next" value="{{ request.GET.next }}">
+      {% endif %}
+
+      <div class="field">
+        <label class="auth-label" for="email">Email</label>
+        <input class="auth-input" id="email" name="email" type="email" placeholder="exemplo@email.com" required>
+      </div>
+
+      <div class="field">
+        <label class="auth-label" for="password">Senha</label>
+        <input class="auth-input" id="password" name="password" type="password" placeholder="********" required>
+      </div>
+
+
+      <button class="auth-button primary" type="submit">Entrar</button>
+
+      <div class="auth-switch">
+        <span>Não tem conta?</span>
+        <a class="auth-switch-link" href="{% url 'accounts:signup' %}">Cadastrar</a>
+      </div>
+    </form>
+
+    <p class="auth-footnote">Protótipo: botão "Entrar" ⇒ Tela Inicial (após autenticação)</p>
   </div>
-</body>
-</html>
+</div>
+{% endblock %}

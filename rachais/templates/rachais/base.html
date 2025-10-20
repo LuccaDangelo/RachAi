@@ -31,7 +31,7 @@
           <a class="top-link top-link--ghost" href="{% url 'accounts:logout' %}">Sair</a>
         {% else %}
           <a class="top-link top-link--ghost" href="{% url 'accounts:login' %}">Entrar</a>
-          <a class="top-link top-link--primary" href="{% url 'accounts:register' %}">Cadastrar</a>
+          <a class="top-link top-link--primary" href="{% url 'accounts:signup' %}">Cadastrar</a>
         {% endif %}
         {% endblock %}
       </nav>
