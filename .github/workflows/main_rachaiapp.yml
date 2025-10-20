@@ -29,7 +29,9 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      # ESTE É O PASSO CRUCIAL QUE ESTAVA A FALTAR
+      - name: Run tests
+        run: python manage.py test
+
       - name: Run collectstatic
         run: python manage.py collectstatic --noinput
 
