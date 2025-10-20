@@ -1,13 +1,8 @@
-# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
-# More GitHub Actions for Azure: https://github.com/Azure/actions
-# More info on Python, GitHub Actions, and Azure App Service: https://aka.ms/python-webapps-actions
-
-name: Build and deploy Python app to Azure Web App - rachaiApp
+name: Build and deploy Python app to Azure Web App - rachai
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
   workflow_dispatch:
 
 jobs:
@@ -19,7 +14,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Python version
+      - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.13'
@@ -28,17 +23,19 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+
       - name: Run tests
         run: python manage.py test || echo "Tests failed but continuing to deploy"
 
-      - name: Run collectstatic
+      - name: Collect static files
         run: python manage.py collectstatic --noinput
 
-      - name: Upload artifact for deployment jobs
+      - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: python-app
+          name: build-output
           path: .
+          retention-days: 1
 
   deploy:
     runs-on: ubuntu-latest
@@ -48,21 +45,24 @@ jobs:
       contents: read
 
     steps:
-      - name: Download artifact from build job
-        uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v4
         with:
-          name: python-app
-      
-      - name: Login to Azure
+          name: build-output
+
+      - name: Create deployment package
+        run: |
+          zip -r app.zip . -x "venv/*" ".git/*" ".github/*" "*.sqlite3" "__pycache__/*"
+
+      - name: Azure login (OIDC)
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_AB0E9C977DD0480EB774BFFF27616D38 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_227E1BB2B008427CB3B7CE2092337B5C }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_CE07918BD2394164BE733F5DB1B79DD2 }}
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-      - name: 'Deploy to Azure Web App'
+      - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
-        id: deploy-to-webapp
         with:
-          app-name: 'rachaiApp'
+          app-name: 'rachai'
           slot-name: 'Production'
+          package: app.zip
