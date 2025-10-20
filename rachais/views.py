@@ -126,7 +126,7 @@ def group_list(request):
 
 @login_required
 def group_detail(request, group_id):
-    groups = _sidebar_groups_qs(request.user)  # sidebar
+    groups = _sidebar_groups_qs(request.user)  
     group = get_object_or_404(groups, pk=group_id)
 
     expenses = list(group.expenses.select_related("paid_by").all())
@@ -167,7 +167,7 @@ def group_detail(request, group_id):
         "rachais/group_detail.html",
         {
             "group": group,
-            "groups": groups,           # para a sidebar
+            "groups": groups,           
             "expenses": expenses,
             "participants": participants,
             "total": total,
@@ -179,7 +179,7 @@ def group_detail(request, group_id):
 @login_required
 def create_group(request):
     """Cria um grupo; impede nomes repetidos apenas para o MESMO criador."""
-    groups = _sidebar_groups_qs(request.user)  # manter sidebar na página de criação
+    groups = _sidebar_groups_qs(request.user)
 
     if request.method == "POST":
         name = (request.POST.get("name") or "").strip()
@@ -196,7 +196,6 @@ def create_group(request):
             messages.success(request, "Grupo criado com sucesso!")
             return redirect("rachais:group_detail", group_id=new_group.id)
 
-        # se houver erro, renderiza preservando a sidebar e o valor digitado
         return render(
             request,
             "rachais/create_group.html",

@@ -10,7 +10,6 @@ from django.core.exceptions import ImproperlyConfigured
 # --------------------------------------------------
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Carrega o arquivo .env se ele existir (para desenvolvimento local)
 env_path = BASE_DIR / '.env'
 if env_path.exists():
     load_dotenv(dotenv_path=env_path)
@@ -18,7 +17,6 @@ if env_path.exists():
 # --------------------------------------------------
 # Lógica de Ambiente (Desenvolvimento vs. Produção)
 # --------------------------------------------------
-# A variável 'TARGET_ENV' deve ser definida como 'production' no seu Azure App Service.
 TARGET_ENV = os.getenv('TARGET_ENV', 'development')
 IS_PRODUCTION = TARGET_ENV.lower().startswith('prod')
 
@@ -26,33 +24,27 @@ IS_PRODUCTION = TARGET_ENV.lower().startswith('prod')
 # Configurações de Segurança e Core
 # --------------------------------------------------
 if not IS_PRODUCTION:
-    # --- AMBIENTE DE DESENVOLVIMENTO ---
     SECRET_KEY = 'django-insecure-sua-chave-de-desenvolvimento-aqui'
     DEBUG = True
     ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
     
-    # Para desenvolvimento, os e-mails são impressos no console.
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 else:
-    # --- AMBIENTE DE PRODUÇÃO (AZURE) ---
     SECRET_KEY = os.getenv('SECRET_KEY')
     if not SECRET_KEY:
         raise ImproperlyConfigured("A SECRET_KEY não foi definida no ambiente de produção!")
 
     DEBUG = os.getenv('DEBUG', '0').lower() in ['true', 't', '1']
     
-    # Ex: 'meuapp.azurewebsites.net www.meudominio.com'
     ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '').split()
     if not ALLOWED_HOSTS:
          raise ImproperlyConfigured("ALLOWED_HOSTS não foi definido no ambiente de produção!")
 
-    # Ex: 'https://meuapp.azurewebsites.net https://www.meudominio.com'
     CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', '').split()
     if not CSRF_TRUSTED_ORIGINS:
         raise ImproperlyConfigured("CSRF_TRUSTED_ORIGINS não foi definido no ambiente de produção!")
 
-    # Configurações de segurança para HTTPS
     SECURE_SSL_REDIRECT = True
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
     SESSION_COOKIE_SECURE = True
@@ -68,9 +60,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # Para servir arquivos estáticos em produção
     'whitenoise.runserver_nostatic',
-    # Seus apps
     'rachais',
 ]
 
@@ -79,7 +69,6 @@ INSTALLED_APPS = [
 # --------------------------------------------------
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    # WhiteNoise Middleware deve vir logo após o SecurityMiddleware
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -118,7 +107,6 @@ TEMPLATES = [
 # Banco de Dados
 # --------------------------------------------------
 if IS_PRODUCTION:
-    # Configuração para PostgreSQL na Azure
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
@@ -130,7 +118,6 @@ if IS_PRODUCTION:
         }
     }
 else:
-    # Configuração para SQLite em desenvolvimento
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
@@ -148,7 +135,6 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
-# SUAS CONFIGURAÇÕES DE AUTENTICAÇÃO PERSONALIZADAS
 AUTHENTICATION_BACKENDS = [
     'rachais.backends.EmailOrUsernameModelBackend',
     'django.contrib.auth.backends.ModelBackend',
@@ -169,15 +155,12 @@ USE_TZ = True
 # --------------------------------------------------
 # Arquivos Estáticos (CSS, JavaScript, Imagens)
 # --------------------------------------------------
-# STATIC_URL = "static/"
 STATIC_URL = os.environ.get('DJANGO_STATIC_URL', "/static/")
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = [
     BASE_DIR / 'assets',
 ]
-# Armazenamento otimizado para produção com WhiteNoise
 STATICFILES_STORAGE = ('whitenoise.storage.CompressedManifestStaticFilesStorage')
-
 # --------------------------------------------------
 # Configuração Padrão
 # --------------------------------------------------

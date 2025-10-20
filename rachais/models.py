@@ -10,7 +10,6 @@ class Group(models.Model):
 
     class Meta:
         constraints = [
-            # Unicidade por criador, ignorando maiúsc/minúsc
             models.UniqueConstraint(
                 Lower("name"), "creator",
                 name="uniq_group_name_per_creator_ci"
