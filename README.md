@@ -19,7 +19,7 @@ RachAi é um aplicativo desenvolvido para simplificar a divisão de despesas ent
 - [Link para o JIRA (gestão do projeto)](https://jeaateam.atlassian.net/jira/software/projects/RAI/boards/34)
 - [Screencast de Apresentação do Protótipo (Figma)](https://youtu.be/dA_j2NWCX2k)
 - [Screencast do site funcional](https://youtu.be/n-TJ8coBneE)
-- [Screencast de Testes Automatizados (Entrega 3)](INSIRA_O_LINK_AQUI)
+- [Screencast de Testes Automatizados (Entrega 3)](https://youtu.be/8Kbwe1w_Krs)
 - [Screencast das Novas Histórias de Usuário (Entrega 3)](INSIRA_O_LINK_AQUI)
 
 </details>
@@ -86,7 +86,7 @@ O projeto continua sendo gerenciado utilizando a metodologia Scrum.
 ![Print do Backlog 3](assets/backlog3.png)
 
 ### Screencasts
-- **Testes Automatizados:** [🎥 Assista ao screencast dos testes automatizados aqui](INSIRA_O_LINK_AQUI)
+- **Testes Automatizados:** [🎥 Assista ao screencast dos testes automatizados aqui](https://youtu.be/8Kbwe1w_Krs)
 - **Novas Histórias de Usuário:** [🎥 Assista ao screencast das novas funcionalidades aqui](INSIRA_O_LINK_AQUI)
 
 </details>
