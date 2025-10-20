@@ -56,21 +56,21 @@ Foi desenvolvido um protótipo de baixa fidelidade para visualizar os fluxos de 
 - **Screencast:** [🎥 Assista ao screencast do site funcional no YouTube aqui](https://youtu.be/n-TJ8coBneE)
 
 - **Quadro da Sprint 2 (Jira):**
-  *Backlog Sprint 2:*
-  ![Backlog da Sprint 2](assets/backlog_sprint2.png)
-  *Quadro da Sprint 2:*
-  ![Quadro da Sprint 2](assets/quadro_sprint2.png)
+  *Backlog Sprint 2:*
+  ![Backlog da Sprint 2](assets/backlog_sprint2.png)
+  *Quadro da Sprint 2:*
+  ![Quadro da Sprint 2](assets/quadro_sprint2.png)
 
 - **Bug Tracker:**
-  ![Bug Tracker](assets/Issues_bugtracker.png)
+  ![Bug Tracker](assets/Issues_bugtracker.png)
 
 - **Colaboração na Prática: Nosso Desenvolvimento em Par:**
-  Nesta entrega, nossa grande aposta foi na programação em par. Acreditamos que "duas cabeças pensam melhor que uma", e essa abordagem fez toda a diferença. Trabalhando lado a lado, conseguimos discutir ideias em tempo real, revisar o código no momento em que era escrito e encontrar soluções mais criativas para os desafios. O resultado não foi apenas um código mais limpo e com menos bugs, mas também um time mais integrado e um aprendizado muito maior para todos.
-  
-  As duplas foram organizadas da seguinte forma:
-  * **Rafael Coutinho Lima** e **Guilherme Tolentino Leitão de Melo**
-  * **João Eduardo Azevedo de Andrade** e **Lucca Albuquerque D'Angelo**
-  * **Marcelo Asfora de Menezes** e **Pedro Coutinho da Silva**
+  Nesta entrega, nossa grande aposta foi na programação em par. Acreditamos que "duas cabeças pensam melhor que uma", e essa abordagem fez toda a diferença. Trabalhando lado a lado, conseguimos discutir ideias em tempo real, revisar o código no momento em que era escrito e encontrar soluções mais criativas para os desafios. O resultado não foi apenas um código mais limpo e com menos bugs, mas também um time mais integrado e um aprendizado muito maior para todos.
+  
+  As duplas foram organizadas da seguinte forma:
+  * **Rafael Coutinho Lima** e **Guilherme Tolentino Leitão de Melo**
+  * **João Eduardo Azevedo de Andrade** e **Lucca Albuquerque D'Angelo**
+  * **Marcelo Asfora de Menezes** e **Pedro Coutinho da Silva**
 
 </details>
 
