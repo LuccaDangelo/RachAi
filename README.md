@@ -87,7 +87,7 @@ O projeto continua sendo gerenciado utilizando a metodologia Scrum.
 
 ### Screencasts
 - **Testes Automatizados:** [🎥 Assista ao screencast dos testes automatizados aqui](https://youtu.be/8Kbwe1w_Krs)
-- **Novas Histórias de Usuário:** [🎥 Assista ao screencast das novas funcionalidades aqui]([INSIRA_O_LINK_AQUI](https://www.youtube.com/watch?v=a_YfVmuAzR4))
+- **Novas Histórias de Usuário:** [🎥 Assista ao screencast das novas funcionalidades aqui](https://www.youtube.com/watch?v=a_YfVmuAzR4)
 
 </details>
 
