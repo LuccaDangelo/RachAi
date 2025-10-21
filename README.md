@@ -20,7 +20,7 @@ RachAi é um aplicativo desenvolvido para simplificar a divisão de despesas ent
 - [Screencast de Apresentação do Protótipo (Figma)](https://youtu.be/dA_j2NWCX2k)
 - [Screencast do site funcional](https://youtu.be/n-TJ8coBneE)
 - [Screencast de Testes Automatizados (Entrega 3)](https://youtu.be/8Kbwe1w_Krs)
-- [Screencast das Novas Histórias de Usuário (Entrega 3)](INSIRA_O_LINK_AQUI)
+- [Screencast das Novas Histórias de Usuário (Entrega 3)](https://www.youtube.com/watch?v=a_YfVmuAzR4)
 
 </details>
 
@@ -87,7 +87,7 @@ O projeto continua sendo gerenciado utilizando a metodologia Scrum.
 
 ### Screencasts
 - **Testes Automatizados:** [🎥 Assista ao screencast dos testes automatizados aqui](https://youtu.be/8Kbwe1w_Krs)
-- **Novas Histórias de Usuário:** [🎥 Assista ao screencast das novas funcionalidades aqui](INSIRA_O_LINK_AQUI)
+- **Novas Histórias de Usuário:** [🎥 Assista ao screencast das novas funcionalidades aqui]([INSIRA_O_LINK_AQUI](https://www.youtube.com/watch?v=a_YfVmuAzR4))
 
 </details>
 
