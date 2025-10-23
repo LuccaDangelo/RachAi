@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/rachai.png" alt="RachAi Logo">
+  <img src="assets/rachai.png" alt="RachAi Logo">
 </p>
 
 # Projeto RachAi
@@ -19,8 +19,8 @@ RachAi é um aplicativo desenvolvido para simplificar a divisão de despesas ent
 - [Link para o JIRA (gestão do projeto)](https://jeaateam.atlassian.net/jira/software/projects/RAI/boards/34)
 - [Screencast de Apresentação do Protótipo (Figma)](https://youtu.be/dA_j2NWCX2k)
 - [Screencast do site funcional](https://youtu.be/n-TJ8coBneE)
-- [Screencast de Testes Automatizados (Entrega 3)](INSIRA_O_LINK_AQUI)
-- [Screencast das Novas Histórias de Usuário (Entrega 3)](INSIRA_O_LINK_AQUI)
+- [Screencast de Testes Automatizados (Entrega 3)](https://youtu.be/8Kbwe1w_Krs)
+- [Screencast das Novas Histórias de Usuário (Entrega 3)](https://www.youtube.com/watch?v=a_YfVmuAzR4)
 
 </details>
 
@@ -65,7 +65,7 @@ Foi desenvolvido um protótipo de baixa fidelidade para visualizar os fluxos de 
   ![Bug Tracker](assets/Issues_bugtracker.png)
 
 - **Colaboração na Prática: Nosso Desenvolvimento em Par:**
-  Nesta entrega, nossa grande aposta foi na programação em par. Acreditamos que "duas cabeças pensam melhor que uma", e essa abordagem fez toda a diferença. Trabalhando lado a lado, conseguimos discutir ideias em tempo real, revisar o código no momento em que era escrito e encontrar soluções mais criativas para os desafios. O resultado não foi apenas um código mais limpo e com menos bugs, mas também um time mais integrado e um aprendizado muito maior para todos.
+  Nesta entrega, nossa grande aposta foi na programação em par.É essa abordagem que fez toda a diferença. Trabalhando lado a lado, conseguimos discutir ideias em tempo real, revisar o código no momento em que era escrito e encontrar soluções mais criativas para os desafios. O resultado não foi apenas um código mais limpo e com menos bugs, mas também um time mais integrado e um aprendizado muito maior para todos.
   
   As duplas foram organizadas da seguinte forma:
   * **Rafael Coutinho Lima** e **Guilherme Tolentino Leitão de Melo**
@@ -85,9 +85,16 @@ O projeto continua sendo gerenciado utilizando a metodologia Scrum.
 **Quadro do BackLog 3:**
 ![Print do Backlog 3](assets/backlog3.png)
 
+**Bug Tracker (Sprint 3):**
+![Bug Tracker da Sprint 3](assets/bugtracker3.png)
+
 ### Screencasts
-- **Testes Automatizados:** [🎥 Assista ao screencast dos testes automatizados aqui](INSIRA_O_LINK_AQUI)
-- **Novas Histórias de Usuário:** [🎥 Assista ao screencast das novas funcionalidades aqui](INSIRA_O_LINK_AQUI)
+- **Testes Automatizados:** [🎥 Assista ao screencast dos testes automatizados aqui](https://youtu.be/8Kbwe1w_Krs)
+- **Novas Histórias de Usuário:** [🎥 Assista ao screencast das novas funcionalidades aqui](https://www.youtube.com/watch?v=a_YfVmuAzR4)
+
+### Colaboração em Par:
+Na Sprint 3, nós permanecemos no "pair programming" e isso já tinha virado rotina. Ficou natural simplesmente entrar no Discord, compartilhar a tela e começar a implementação das histórias.
+Essa dinâmica tornou a caça aos bugs muito mais eficiente e o desenvolvimento das novas *features*, como os testes automatizados. A troca constante de conhecimento, aprendemos juntos, corrigimos juntos.
 
 </details>
 
