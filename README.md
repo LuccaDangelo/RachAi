@@ -94,7 +94,7 @@ O projeto continua sendo gerenciadoD utilizando a metodologia Scrum.
 - **Novas Histórias de Usuário:** [🎥 Assista ao screencast das novas funcionalidades aqui](https://www.youtube.com/watch?v=a_YfVmuAzR4)
 
 ### Teste CI/CD
-- [➡️ Acesse o link para o Teste CI/CD aqui](LINK_AQUI)
+- [➡️ Acesse o link para o Teste CI/CD aqui](https://youtu.be/Fv5gN8yQNqw)
 
 ### Colaboração em Par:
 Na Sprint 3, nós permanecemos no "pair programming" e isso já tinha virado rotina. Ficou natural simplesmente entrar no Discord, compartilhar a tela e começar a implementação das histórias.
