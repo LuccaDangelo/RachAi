@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/rachai.png" alt="RachAi Logo">
+  <img src="assets/rachai.png" alt="RachAi Logo">
 </p>
 
 # Projeto RachAi
@@ -85,9 +85,16 @@ O projeto continua sendo gerenciado utilizando a metodologia Scrum.
 **Quadro do BackLog 3:**
 ![Print do Backlog 3](assets/backlog3.png)
 
+**Bug Tracker (Sprint 3):**
+![Bug Tracker da Sprint 3](assets/bugtracker3.png)
+
 ### Screencasts
 - **Testes Automatizados:** [🎥 Assista ao screencast dos testes automatizados aqui](https://youtu.be/8Kbwe1w_Krs)
 - **Novas Histórias de Usuário:** [🎥 Assista ao screencast das novas funcionalidades aqui](https://www.youtube.com/watch?v=a_YfVmuAzR4)
+
+### Colaboração em Par:
+Na Sprint 3, nós permanecemos no "pair programming" e isso já tinha virado rotina. Ficou natural simplesmente entrar no Discord, compartilhar a tela e começar a implementação das histórias.
+Essa dinâmica tornou a caça aos bugs muito mais eficiente e o desenvolvimento das novas *features*, como os testes automatizados. A troca constante de conhecimento, aprendemos juntos, corrigimos juntos.
 
 </details>
 
