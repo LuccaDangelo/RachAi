@@ -23,9 +23,27 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+          
+      - name: Setup Chrome
+        uses: browser-actions/setup-chrome@v1
+        with:
+          chrome-version: stable
 
-      - name: Run tests
-        run: python manage.py test || echo "Tests failed but continuing to deploy"
+      - name: Check Chrome
+        run: |
+          which google-chrome || which chrome || true
+          google-chrome --version || true
+
+      - name: Kill orphan chrome (best effort)
+        run: |
+          pkill -f chrome || true
+          pkill -f chromium || true
+
+      - name: Run tests (no parallel)
+        env:
+          CI: "true"
+        run: |
+          python manage.py test --parallel 1 || echo "Tests failed but continuing to deploy"
 
       - name: Collect static files
         run: python manage.py collectstatic --noinput
