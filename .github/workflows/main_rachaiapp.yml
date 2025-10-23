@@ -23,21 +23,31 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          
+
+      # === Navegadores para E2E ===
       - name: Setup Chrome
         uses: browser-actions/setup-chrome@v1
         with:
           chrome-version: stable
 
-      - name: Check Chrome
+      - name: Setup Firefox (fallback automático)
+        uses: browser-actions/setup-firefox@v1
+        with:
+          firefox-version: latest
+
+      - name: Check browsers
         run: |
           which google-chrome || which chrome || true
           google-chrome --version || true
+          which firefox || true
+          firefox --version || true
 
-      - name: Kill orphan chrome (best effort)
+      # mata possíveis processos órfãos
+      - name: Kill orphan browsers (best effort)
         run: |
           pkill -f chrome || true
           pkill -f chromium || true
+          pkill -f firefox || true
 
       - name: Run tests (no parallel)
         env:
