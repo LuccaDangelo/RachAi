@@ -19,17 +19,22 @@ class E2EFullFlowTests(StaticLiveServerTestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
+        cls._tmp_profile = tempfile.mkdtemp(prefix="chrome-prof-")
+
         opts = webdriver.ChromeOptions()
+        opts.add_argument(f"--user-data-dir={cls._tmp_profile}")
         opts.add_argument("--headless=new")
         opts.add_argument("--no-sandbox")
         opts.add_argument("--disable-dev-shm-usage")
-        cls._tmp_profile = None
-        if os.getenv("CI"):
-            cls._tmp_profile = tempfile.mkdtemp(prefix="chrome-prof-")
-            opts.add_argument(f"--user-data-dir={cls._tmp_profile}")
+        opts.add_argument("--disable-gpu")
+        opts.add_argument("--window-size=1920,1080")
 
-        cls.selenium = webdriver.Chrome(options=opts)
-        cls.selenium.implicitly_wait(5)
+        try:
+            cls.selenium = webdriver.Chrome(options=opts)
+            cls.selenium.implicitly_wait(5)
+        except Exception:
+            shutil.rmtree(cls._tmp_profile, ignore_errors=True)
+            raise
 
     @classmethod
     def tearDownClass(cls):
