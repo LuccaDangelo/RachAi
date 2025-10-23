@@ -1,4 +1,5 @@
 import time
+import os, tempfile, shutil
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from django.contrib.auth import get_user_model
 from django.urls import reverse
@@ -18,13 +19,25 @@ class E2EFullFlowTests(StaticLiveServerTestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        options = webdriver.ChromeOptions()
-        cls.selenium = webdriver.Chrome(options=options)
+        opts = webdriver.ChromeOptions()
+        opts.add_argument("--headless=new")
+        opts.add_argument("--no-sandbox")
+        opts.add_argument("--disable-dev-shm-usage")
+        cls._tmp_profile = None
+        if os.getenv("CI"):
+            cls._tmp_profile = tempfile.mkdtemp(prefix="chrome-prof-")
+            opts.add_argument(f"--user-data-dir={cls._tmp_profile}")
+
+        cls.selenium = webdriver.Chrome(options=opts)
         cls.selenium.implicitly_wait(5)
 
     @classmethod
     def tearDownClass(cls):
-        cls.selenium.quit()
+        try:
+            cls.selenium.quit()
+        finally:
+            if cls.__dict__.get("_tmp_profile"):
+                shutil.rmtree(cls._tmp_profile, ignore_errors=True)
         super().tearDownClass()
 
     def setUp(self):
