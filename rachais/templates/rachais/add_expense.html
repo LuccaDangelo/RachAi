@@ -25,21 +25,113 @@
           <p class="panel-subtitle">Registre uma nova despesa para o grupo.</p>
         </div>
       </div>
-      <form method="post" class="form-stack">
+      
+      <form method="post" class="form-stack" id="add-expense-form">
         {% csrf_token %}
+        
         <label class="form-label" for="description">Descrição</label>
-        <input class="form-input" id="description" name="description" type="text" maxlength="255" placeholder="Ex.: Almoço" required>
+        <input class="form-input" 
+               id="description" 
+               name="description" 
+               type="text" 
+               maxlength="255" 
+               placeholder="Ex.: Almoço" 
+               value="{{ submitted_data.description }}" 
+               required>
 
         <label class="form-label" for="amount">Valor (R$)</label>
-        <input class="form-input" id="amount" name="amount" type="text" inputmode="decimal" placeholder="Ex.: 100,00" required>
+        <input class="form-input" 
+               id="amount" 
+               name="amount" 
+               type="text" 
+               inputmode="decimal" 
+               placeholder="Ex.: 100,00" 
+               value="{{ submitted_data.amount }}"
+               required>
 
         <label class="form-label" for="paid_by">Quem pagou?</label>
         <select class="form-input" id="paid_by" name="paid_by" required>
           <option value="">Selecione</option>
           {% for p in participants %}
-            <option value="{{ p.user.id }}">{{ p.display_name }}</option>
+            <option value="{{ p.user.id }}" 
+                    {% if submitted_data.paid_by == p.user.id|stringformat:"s" %}selected{% endif %}>
+              {{ p.display_name }}
+            </option>
           {% endfor %}
         </select>
+        
+        <hr/>
+        
+        <label class="form-label" for="split_method_select">Como dividir?</label>
+        <select class="form-input" id="split_method_select" name="split_method">
+          <option value="EQUAL" 
+                  {% if submitted_data.split_method == 'EQUAL' or not submitted_data.split_method %}selected{% endif %}>
+            Dividir igualmente
+          </option>
+          <option value="UNEQUAL_VALUE" 
+                  {% if submitted_data.split_method == 'UNEQUAL_VALUE' %}selected{% endif %}>
+            Dividir por valores exatos (R$)
+          </option>
+          <option value="UNEQUAL_PERCENTAGE" 
+                  {% if submitted_data.split_method == 'UNEQUAL_PERCENTAGE' %}selected{% endif %}>
+            Dividir por porcentagem (%)
+          </option>
+        </select>
+        
+        <div id="unequal_value_section" style="display: none; padding: 1.5rem; background-color: #f7f7f7; border-radius: 8px;">
+          <h4 style="margin-top: 0;">Valores Exatos (R$)</h4>
+          <p>
+             A soma dos valores deve ser exatamente: 
+             <strong>R$ <span id="total_amount_display_value">0.00</span></strong>
+          </p>
+          
+          {% for p in participants %}
+          <div style="display: grid; grid-template-columns: 1fr 1fr; align-items: center; margin-bottom: 0.75rem;">
+            <label class="form-label" 
+                   for="split_user_{{ p.user.id }}" 
+                   style="margin-bottom: 0;">
+              {{ p.display_name }}:
+            </label>
+            <input type="text" 
+                   name="split_user_{{ p.user.id }}" 
+                   id="split_user_{{ p.user.id }}"
+                   class="form-input split-input-value"
+                   inputmode="decimal"
+                   placeholder="0,00"
+                   value="0"> </div>
+          {% endfor %}
+          
+          <hr/>
+          <strong style="font-size: 1.1rem;">
+            Soma atual: R$ <span id="value_sum_display">0.00</span>
+          </strong>
+        </div>
+
+        <div id="unequal_percentage_section" style="display: none; padding: 1.5rem; background-color: #f7f7f7; border-radius: 8px;">
+          <h4 style="margin-top: 0;">Porcentagens (%)</h4>
+          <p>A soma das porcentagens deve ser exatamente: <strong>100%</strong></p>
+          
+          {% for p in participants %}
+          <div style="display: grid; grid-template-columns: 1fr 1fr; align-items: center; margin-bottom: 0.75rem;">
+            <label class="form-label" 
+                   for="split_perc_{{ p.user.id }}" 
+                   style="margin-bottom: 0;">
+              {{ p.display_name }}:
+            </label>
+            <input type="text" 
+                   name="split_perc_{{ p.user.id }}" 
+                   id="split_perc_{{ p.user.id }}"
+                   class="form-input split-input-perc"
+                   inputmode="decimal"
+                   placeholder="0.0"
+                   value="0"> </div>
+          {% endfor %}
+
+          <hr/>
+          <strong style="font-size: 1.1rem;">
+            Soma atual: <span id="perc_sum_display">0.0</span>%
+          </strong>
+        </div>
 
         <div class="form-actions">
           <a class="btn-secondary" href="{% url 'rachais:group_detail' group.id %}">Cancelar</a>
@@ -49,4 +141,65 @@
     </div>
   </section>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        
+      ]  const splitSelect = document.getElementById('split_method_select');
+        const valueSection = document.getElementById('unequal_value_section');
+        const percSection = document.getElementById('unequal_percentage_section');
+        
+        const amountInput = document.getElementById('amount');
+        const totalAmountDisplay = document.getElementById('total_amount_display_value');
+        
+     ]   const valueInputs = document.querySelectorAll('.split-input-value');
+        const valueSumDisplay = document.getElementById('value_sum_display');
+        
+        const percInputs = document.querySelectorAll('.split-input-perc');
+        const percSumDisplay = document.getElementById('perc_sum_display');
+
+    ]    function normalizeDecimal(valueStr) {
+   ]         let norm = (valueStr || '0').replace(/\./g, '').replace(',', '.');
+            let val = parseFloat(norm);
+            return isNaN(val) ? 0.0 : val;
+        }
+
+  ]      function toggleSections() {
+            const selected = splitSelect.value;
+            valueSection.style.display = (selected === 'UNEQUAL_VALUE') ? 'block' : 'none';
+            percSection.style.display = (selected === 'UNEQUAL_PERCENTAGE') ? 'block' : 'none';
+        }
+ ]       splitSelect.addEventListener('change', toggleSections);
+ 
+        toggleSections(); 
+
+]        function updateMainAmountDisplay() {
+            let val = normalizeDecimal(amountInput.value);
+            totalAmountDisplay.textContent = val.toFixed(2);
+        }
+        amountInput.addEventListener('input', updateMainAmountDisplay);
+              }        updateMainAmountDisplay();
+
+        function updateValueSum() {
+            let sum = 0.0;
+            valueInputs.forEach(input => {
+                sum += normalizeDecimal(input.value);
+            });
+            valueSumDisplay.textContent = sum.toFixed(2);
+        }
+        valueInputs.forEach(input => input.addEventListener('input', updateValueSum));
+
+        updateValueSum();
+
+        function updatePercSum() {
+            let sum = 0.0;
+            percInputs.forEach(input => {
+                sum += normalizeDecimal(input.value);
+            });
+            percSumDisplay.textContent = sum.toFixed(1);
+        }
+        percInputs.forEach(input => input.addEventListener('input', updatePercSum));
+        updatePercSum();
+    });
+</script>
 {% endblock %}

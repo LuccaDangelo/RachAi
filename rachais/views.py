@@ -59,26 +59,27 @@ def _sidebar_groups_qs(user: User):
 
 def _calculate_balances(group):
     participants = list(group.participants.select_related("user").all())
-    expenses = list(group.expenses.select_related("paid_by").all())
-
-    if not participants:
-        return{}
     
-    n_participants = len(participants)
+    expenses = list(group.expenses.select_related("paid_by").all())
+    
     balances = defaultdict(Decimal)
 
+    all_splits = ExpenseSplit.objects.filter(
+        expense__in=expenses
+    ).select_related('user')
+
+    splits_by_expense = defaultdict(list)
+    for split in all_splits:
+        splits_by_expense[split.expense_id].append(split)
+
     for expense in expenses:
-        if n_participants <= 0:
-            continue
-
-        share = (expense.amount / Decimal(n_participants)).quantize(Decimal("0.01"))
-
-
         balances[expense.paid_by.id] += expense.amount
 
-        for participant in participants:
-            balances[participant.user.id] -= share
-    
+        splits_for_this_expense = splits_by_expense.get(expense.id, [])
+
+        for split in splits_for_this_expense:
+            balances[split.user.id] -= split.amount_owed
+
     return dict(balances)
 
 def _calculate_settlements(balances, participants_qs):
@@ -117,8 +118,6 @@ def _calculate_settlements(balances, participants_qs):
     return settlements
 
 
-# ---------------------- VIEWS ---------------------- #
-
 @login_required
 def group_list(request):
     groups = _sidebar_groups_qs(request.user)
@@ -127,7 +126,7 @@ def group_list(request):
 
 @login_required
 def group_detail(request, group_id):
-    groups = _sidebar_groups_qs(request.user)  
+    groups = _sidebar_groups_qs(request.user)
     group = get_object_or_404(groups, pk=group_id)
 
     expenses = list(group.expenses.select_related("paid_by").all())
@@ -137,7 +136,9 @@ def group_detail(request, group_id):
         setattr(p, "display_name", _display_name(p.user))
 
     total = sum((e.amount for e in expenses), Decimal("0"))
-    balances = _calculate_balances(group)
+    
+    balances = _calculate_balances(group) 
+    
     settlements = _calculate_settlements(balances, participants)
 
     for s in settlements:
@@ -148,19 +149,29 @@ def group_detail(request, group_id):
         balance = balances.get(participant.user.id, Decimal("0"))
         setattr(participant, "balance", balance)
         setattr(participant, "balance_abs", balance.copy_abs())
+    all_splits = ExpenseSplit.objects.filter(
+        expense__in=expenses
+    ).select_related('user')
     
-    users_in_group = [p.user for p in participants]
-    n_participants = len(users_in_group)
+    splits_by_expense = defaultdict(list)
+    for split in all_splits:
+        splits_by_expense[split.expense_id].append(split)
 
     for e in expenses:
         setattr(e, "paid_by_name", _display_name(e.paid_by))
+        
         split_list = []
-        if n_participants > 0:
-            cota = (e.amount / Decimal(n_participants)).quantize(Decimal("0.01"))
-            for u in users_in_group:
-                if u.id == e.paid_by_id:
-                    continue
-                split_list.append({"name": _display_name(u), "amount": cota})
+        splits_for_this_expense = splits_by_expense.get(e.id, [])
+        
+        for split in splits_for_this_expense:
+            if split.user.id == e.paid_by_id:
+                continue 
+                
+            split_list.append({
+                "name": _display_name(split.user), 
+                "amount": split.amount_owed 
+            })
+            
         setattr(e, "split_list", split_list)
 
     return render(
@@ -168,14 +179,13 @@ def group_detail(request, group_id):
         "rachais/group_detail.html",
         {
             "group": group,
-            "groups": groups,           
+            "groups": groups,
             "expenses": expenses,
             "participants": participants,
             "total": total,
             "settlements": settlements,
-        },
+        }
     )
-
 
 @login_required
 def create_group(request):
@@ -255,39 +265,213 @@ def add_expense(request, group_id):
     participants = list(group.participants.select_related("user").all())
     for p in participants:
         setattr(p, "display_name", _display_name(p.user))
+    context = {
+        "group": group,
+        "participants": participants,
+        "submitted_data": request.POST or {}
+    }
 
     if request.method == "POST":
         description = (request.POST.get("description") or "").strip()
         raw_amount = (request.POST.get("amount") or "").strip()
         paid_by_id = request.POST.get("paid_by")
+        split_method = request.POST.get("split_method", "EQUAL") 
 
         if not description:
             messages.error(request, "Informe a descrição da despesa.")
-            return render(request, "rachais/add_expense.html", {"group": group, "participants": participants})
+            return render(request, "rachais/add_expense.html", context)
 
         norm = raw_amount.replace(".", "").replace(",", ".")
         try:
-            amount = Decimal(norm)
+            amount = Decimal(norm) 
         except (InvalidOperation, AttributeError):
             messages.error(request, "Informe um valor válido (ex.: 100,00).")
-            return render(request, "rachais/add_expense.html", {"group": group, "participants": participants})
+            return render(request, "rachais/add_expense.html", context)
 
         if amount <= 0:
             messages.error(request, "O valor da despesa deve ser maior que zero")
-            return render(request, "rachais/add_expense.html", {"group": group, "participants": participants})
+            return render(request, "rachais/add_expense.html", context)
 
         try:
             payer = User.objects.get(pk=paid_by_id)
         except (User.DoesNotExist, ValueError, TypeError):
             messages.error(request, "Selecione quem pagou.")
-            return render(request, "rachais/add_expense.html", {"group": group, "participants": participants})
+            return render(request, "rachais/add_expense.html", context) 
 
         if not Participant.objects.filter(group=group, user=payer).exists():
             messages.error(request, "O pagador precisa ser participante do grupo.")
-            return render(request, "rachais/add_expense.html", {"group": group, "participants": participants})
+            return render(request, "rachais/add_expense.html", context) 
 
-        Expense.objects.create(group=group, description=description, amount=amount, paid_by=payer)
-        messages.success(request, "Despesa registrada com sucesso.")
-        return redirect("rachais:group_detail", group_id=group.id)
+        participant_users = [p.user for p in participants]
 
-    return render(request, "rachais/add_expense.html", {"group": group, "participants": participants})
+       
+        if split_method == 'EQUAL':
+            n_participants = len(participant_users)
+            if n_participants == 0:
+                messages.error(request, "Não há participantes no grupo para dividir.")
+                return render(request, "rachais/add_expense.html", context)
+
+            split_amount = round(amount / n_participants, 2)
+            remainder = amount - (split_amount * n_participants)
+
+            try:
+                with transaction.atomic():
+                    expense = Expense.objects.create(
+                        group=group,
+                        description=description,
+                        amount=amount,
+                        paid_by=payer,
+                        split_method=split_method
+                    )
+                    
+                    splits_to_create = []
+                    for i, user in enumerate(participant_users):
+                        amount_owed = split_amount
+                        if i == 0: 
+                            amount_owed += remainder
+                        
+                        splits_to_create.append(
+                            ExpenseSplit(
+                                expense=expense,
+                                user=user,
+                                amount_owed=amount_owed
+                            )
+                        )
+                    ExpenseSplit.objects.bulk_create(splits_to_create)
+                
+                messages.success(request, "Despesa registrada com sucesso.")
+                return redirect("rachais:group_detail", group_id=group.id)
+
+            except Exception as e:
+                messages.error(request, f"Erro ao salvar: {e}")
+                return render(request, "rachais/add_expense.html", context)
+
+        elif split_method == 'UNEQUAL_VALUE':
+            total_split_sum = Decimal('0.00')
+            splits_data_to_save = [] 
+
+            for user in participant_users:
+                field_name = f'split_user_{user.id}'
+                raw_value = (request.POST.get(field_name) or "0").strip()
+                norm_value = raw_value.replace(".", "").replace(",", ".")
+                
+                try:
+                    value_decimal = Decimal(norm_value)
+                    if value_decimal < 0:
+                        raise InvalidOperation("Valor não pode ser negativo")
+                except (InvalidOperation, AttributeError):
+                    messages.error(request, f"Valor inválido inserido para {user.username}.")
+                    return render(request, "rachais/add_expense.html", context)
+
+                total_split_sum += value_decimal
+                splits_data_to_save.append((user, value_decimal))
+
+            if total_split_sum.quantize(Decimal("0.01")) != amount.quantize(Decimal("0.01")):
+                error_msg = (
+                    f"A soma das partes (R$ {total_split_sum:.2f}) não corresponde "
+                    f"ao valor total da despesa (R$ {amount:.2f})"
+                )
+                messages.error(request, error_msg)
+                return render(request, "rachais/add_expense.html", context)
+            
+            try:
+                with transaction.atomic():
+                    expense = Expense.objects.create(
+                        group=group,
+                        description=description,
+                        amount=amount,
+                        paid_by=payer,
+                        split_method=split_method
+                    )
+                    
+                    splits_to_create = []
+                    for user, amount_owed in splits_data_to_save:
+                        if amount_owed > 0:
+                            splits_to_create.append(
+                                ExpenseSplit(
+                                    expense=expense,
+                                    user=user,
+                                    amount_owed=amount_owed
+                                )
+                            )
+                    ExpenseSplit.objects.bulk_create(splits_to_create)
+                
+                messages.success(request, "Despesa registrada com sucesso.")
+                return redirect("rachais:group_detail", group_id=group.id)
+
+            except Exception as e:
+                messages.error(request, f"Erro ao salvar: {e}")
+                return render(request, "rachais/add_expense.html", context)
+
+        elif split_method == 'UNEQUAL_PERCENTAGE':
+            total_percentage_sum = Decimal('0.00')
+            perc_data_to_save = [] 
+
+            for user in participant_users:
+                field_name = f'split_perc_{user.id}'
+                raw_perc = (request.POST.get(field_name) or "0").strip()
+                norm_perc = raw_perc.replace(".", "").replace(",", ".")
+                
+                try:
+                    perc_decimal = Decimal(norm_perc)
+                    if perc_decimal < 0:
+                        raise InvalidOperation("Porcentagem não pode ser negativa")
+                except (InvalidOperation, AttributeError):
+                    messages.error(request, f"Porcentagem inválida para {user.username}.")
+                    return render(request, "rachais/add_expense.html", context)
+
+                total_percentage_sum += perc_decimal
+                perc_data_to_save.append((user, perc_decimal))
+            
+            if total_percentage_sum.quantize(Decimal("0.01")) != Decimal('100.00'):
+                error_msg = (
+                    f"A soma das porcentagens ({total_percentage_sum:.2f}%) não é "
+                    f"exatamente 100%"
+                )
+                messages.error(request, error_msg)
+                return render(request, "rachais/add_expense.html", context)
+            
+            try:
+                with transaction.atomic():
+                    expense = Expense.objects.create(
+                        group=group,
+                        description=description,
+                        amount=amount,
+                        paid_by=payer,
+                        split_method=split_method
+                    )
+                    
+                    splits_to_create = []
+                    total_calculated_amount = Decimal('0.00')
+                    
+                    for i, (user, percentage) in enumerate(perc_data_to_save):
+                        amount_owed = (percentage / Decimal('100.00') * amount).quantize(Decimal("0.01"))
+                        total_calculated_amount += amount_owed
+
+                        if amount_owed > 0:
+                            splits_to_create.append(
+                                ExpenseSplit(
+                                    expense=expense,
+                                    user=user,
+                                    amount_owed=amount_owed
+                                )
+                            )
+                    remainder = amount - total_calculated_amount
+                    if remainder != Decimal('0.00') and splits_to_create:
+                        splits_to_create[0].amount_owed += remainder
+
+                    ExpenseSplit.objects.bulk_create(splits_to_create)
+                
+                messages.success(request, "Despesa registrada com sucesso.")
+                return redirect("rachais:group_detail", group_id=group.id)
+
+            except Exception as e:
+                messages.error(request, f"Erro ao salvar: {e}")
+                return render(request, "rachais/add_expense.html", context)
+
+        else:
+            messages.error(request, "Método de divisão inválido.")
+            return render(request, "rachais/add_expense.html", context)
+
+
+    return render(request, "rachais/add_expense.html", context)
