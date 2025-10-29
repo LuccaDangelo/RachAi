@@ -3,6 +3,7 @@
 
 {% block content %}
 <div class="dashboard-shell">
+
   <aside class="dashboard-sidebar">
     <div class="sidebar-card">
       <div class="sidebar-title">Seus Grupos</div>
@@ -18,6 +19,7 @@
   </aside>
 
   <section class="dashboard-main">
+  
     {% if messages %}
       <div class="flash-stack">
         {% for m in messages %}
@@ -71,7 +73,7 @@
               <li class="settlement-item">
                 <span class="settlement-debtor">{{ s.from_name }}</span>
                 deve
-                <span class="settlement-amount">R$ {{ s.amount }}</span>
+                <span class="settlement-amount">R$ {{ s.amount|localize }}</span>
                 para
                 <span class="settlement-creditor">{{ s.to_name }}</span>
               </li>
@@ -101,7 +103,6 @@
       {% endif %}
     </div>
 
-
     <div class="panel">
       <div class="panel-header panel-header--between">
         <h2 class="panel-title">Despesas</h2>
@@ -117,16 +118,17 @@
                   <div class="expense-name">{{ e.description }}</div>
                   <div class="expense-meta">Pago por {{ e.paid_by_name }}</div>
                 </div>
-                <div class="expense-amount">R$ {{ e.amount }}</div>
+                <div class="expense-amount">R$ {{ e.amount|localize }}</div>
               </div>
+              
               <div class="expense-split">
                 {% if e.split_list %}
-                  <strong>Divisão igual:</strong>
+                  <strong>{{ e.get_split_method_display }}:</strong> 
                   {% for s in e.split_list %}
-                    {{ s.name }} deve R$ {{ s.amount }}{% if not forloop.last %}; {% else %}.{% endif %}
+                    {{ s.name }} deve R$ {{ s.amount|localize }}{% if not forloop.last %}; {% else %}.{% endif %}
                   {% endfor %}
                 {% else %}
-                  <strong>Divisão igual:</strong> ninguém para dividir ainda.
+                  <strong>{{ e.get_split_method_display }}:</strong> ninguém para dividir ainda.
                 {% endif %}
               </div>
             </li>
@@ -134,7 +136,7 @@
         </ul>
         <div class="expense-total">
           <span>Total do grupo:</span>
-          <strong>R$ {{ total }}</strong>
+          <strong>R$ {{ total|localize }}</strong>
         </div>
       {% else %}
         <p class="panel-empty">Nenhuma despesa adicionada.</p>

@@ -304,7 +304,7 @@ def add_expense(request, group_id):
 
         participant_users = [p.user for p in participants]
 
-       
+        
         if split_method == 'EQUAL':
             n_participants = len(participant_users)
             if n_participants == 0:
@@ -410,7 +410,8 @@ def add_expense(request, group_id):
             for user in participant_users:
                 field_name = f'split_perc_{user.id}'
                 raw_perc = (request.POST.get(field_name) or "0").strip()
-                norm_perc = raw_perc.replace(".", "").replace(",", ".")
+                
+                norm_perc = raw_perc.replace(",", ".")
                 
                 try:
                     perc_decimal = Decimal(norm_perc)
@@ -444,8 +445,12 @@ def add_expense(request, group_id):
                     splits_to_create = []
                     total_calculated_amount = Decimal('0.00')
                     
+                    perc_data_to_save.sort(key=lambda x: x[0].id) 
+
                     for i, (user, percentage) in enumerate(perc_data_to_save):
-                        amount_owed = (percentage / Decimal('100.00') * amount).quantize(Decimal("0.01"))
+                        amount_owed = (percentage / Decimal('100.00') * amount).quantize(
+                            Decimal("0.01"), rounding=decimal.ROUND_HALF_UP
+                        )
                         total_calculated_amount += amount_owed
 
                         if amount_owed > 0:
@@ -456,6 +461,7 @@ def add_expense(request, group_id):
                                     amount_owed=amount_owed
                                 )
                             )
+                    
                     remainder = amount - total_calculated_amount
                     if remainder != Decimal('0.00') and splits_to_create:
                         splits_to_create[0].amount_owed += remainder
@@ -468,7 +474,7 @@ def add_expense(request, group_id):
             except Exception as e:
                 messages.error(request, f"Erro ao salvar: {e}")
                 return render(request, "rachais/add_expense.html", context)
-
+            
         else:
             messages.error(request, "Método de divisão inválido.")
             return render(request, "rachais/add_expense.html", context)

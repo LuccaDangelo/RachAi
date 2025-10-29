@@ -98,7 +98,7 @@
                    class="form-input split-input-value"
                    inputmode="decimal"
                    placeholder="0,00"
-                   value="0"> </div>
+                   value=""> </div>
           {% endfor %}
           
           <hr/>
@@ -124,7 +124,7 @@
                    class="form-input split-input-perc"
                    inputmode="decimal"
                    placeholder="0.0"
-                   value="0"> </div>
+                   value=""> </div>
           {% endfor %}
 
           <hr/>
@@ -145,61 +145,102 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         
-      ]  const splitSelect = document.getElementById('split_method_select');
+        const splitSelect = document.getElementById('split_method_select');
         const valueSection = document.getElementById('unequal_value_section');
         const percSection = document.getElementById('unequal_percentage_section');
         
         const amountInput = document.getElementById('amount');
         const totalAmountDisplay = document.getElementById('total_amount_display_value');
         
-     ]   const valueInputs = document.querySelectorAll('.split-input-value');
+        const valueInputs = document.querySelectorAll('.split-input-value');
         const valueSumDisplay = document.getElementById('value_sum_display');
         
         const percInputs = document.querySelectorAll('.split-input-perc');
         const percSumDisplay = document.getElementById('perc_sum_display');
 
-    ]    function normalizeDecimal(valueStr) {
-   ]         let norm = (valueStr || '0').replace(/\./g, '').replace(',', '.');
+        function normalizeDecimal(valueStr) {
+            let norm = (valueStr || '0').replace(/\./g, '').replace(',', '.');
             let val = parseFloat(norm);
             return isNaN(val) ? 0.0 : val;
         }
 
-  ]      function toggleSections() {
+        function toggleSections() {
             const selected = splitSelect.value;
             valueSection.style.display = (selected === 'UNEQUAL_VALUE') ? 'block' : 'none';
             percSection.style.display = (selected === 'UNEQUAL_PERCENTAGE') ? 'block' : 'none';
         }
- ]       splitSelect.addEventListener('change', toggleSections);
- 
+        splitSelect.addEventListener('change', toggleSections);
         toggleSections(); 
 
-]        function updateMainAmountDisplay() {
+        function updateMainAmountDisplay() {
             let val = normalizeDecimal(amountInput.value);
             totalAmountDisplay.textContent = val.toFixed(2);
         }
         amountInput.addEventListener('input', updateMainAmountDisplay);
-              }        updateMainAmountDisplay();
+        updateMainAmountDisplay();
 
-        function updateValueSum() {
+        function updateValueSum(event) {
             let sum = 0.0;
+            let changedInput = event ? event.target : null; 
+            
             valueInputs.forEach(input => {
                 sum += normalizeDecimal(input.value);
             });
             valueSumDisplay.textContent = sum.toFixed(2);
+
+            let totalAmount = normalizeDecimal(amountInput.value);
+            
+            if (changedInput && totalAmount > 0 && valueInputs.length === 2) {
+                let changedValue = normalizeDecimal(changedInput.value);
+
+                let remainder = totalAmount - changedValue;
+                
+                if (remainder < 0) remainder = 0; 
+                let otherInput = (valueInputs[0] === changedInput) ? valueInputs[1] : valueInputs[0];
+                
+                if (normalizeDecimal(otherInput.value) !== remainder) {
+                    otherInput.value = remainder.toFixed(2).replace('.', ',');
+                }
+                
+                let finalSum = changedValue + remainder;
+                valueSumDisplay.textContent = finalSum.toFixed(2);
+            }
         }
         valueInputs.forEach(input => input.addEventListener('input', updateValueSum));
-
-        updateValueSum();
-
-        function updatePercSum() {
+        updateValueSum(); 
+        function updatePercSum(event) {
             let sum = 0.0;
+
+            let changedInput = event ? event.target : null; 
+
             percInputs.forEach(input => {
                 sum += normalizeDecimal(input.value);
             });
             percSumDisplay.textContent = sum.toFixed(1);
+            
+            const totalPercentage = 100.0;
+
+            if (changedInput && percInputs.length === 2) {
+                let changedValue = normalizeDecimal(changedInput.value);
+
+                let remainder = totalPercentage - changedValue;
+                
+                if (remainder < 0) remainder = 0; 
+
+                let otherInput = (percInputs[0] === changedInput) ? percInputs[1] : percInputs[0];
+                
+                if (normalizeDecimal(otherInput.value) !== remainder) {
+
+                    otherInput.value = remainder.toFixed(1); 
+                }
+
+                let finalSum = changedValue + remainder;
+                percSumDisplay.textContent = finalSum.toFixed(1);
+            }
         }
         percInputs.forEach(input => input.addEventListener('input', updatePercSum));
-        updatePercSum();
+        updatePercSum(); 
     });
 </script>
+
 {% endblock %}
