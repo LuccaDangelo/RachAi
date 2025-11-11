@@ -1,28 +1,21 @@
-# rachai/settings.py
 
 import os
 from pathlib import Path
 from dotenv import load_dotenv
 from django.core.exceptions import ImproperlyConfigured
 
-# --------------------------------------------------
-# Diretórios e Carregamento de Variáveis de Ambiente
-# --------------------------------------------------
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 env_path = BASE_DIR / '.env'
 if env_path.exists():
     load_dotenv(dotenv_path=env_path)
 
-# --------------------------------------------------
-# Lógica de Ambiente (Desenvolvimento vs. Produção)
-# --------------------------------------------------
+
 TARGET_ENV = os.getenv('TARGET_ENV', 'development')
 IS_PRODUCTION = TARGET_ENV.lower().startswith('prod')
 
-# --------------------------------------------------
-# Configurações de Segurança e Core
-# --------------------------------------------------
+
 if not IS_PRODUCTION:
     SECRET_KEY = 'django-insecure-sua-chave-de-desenvolvimento-aqui'
     DEBUG = True
@@ -50,9 +43,7 @@ else:
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
 
-# --------------------------------------------------
-# Aplicativos Instalados
-# --------------------------------------------------
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -64,9 +55,7 @@ INSTALLED_APPS = [
     'rachais',
 ]
 
-# --------------------------------------------------
-# Middleware
-# --------------------------------------------------
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
@@ -78,15 +67,11 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-# --------------------------------------------------
-# URLs e WSGI
-# --------------------------------------------------
+
 ROOT_URLCONF = 'rachai.urls'
 WSGI_APPLICATION = 'rachai.wsgi.application'
 
-# --------------------------------------------------
-# Templates
-# --------------------------------------------------
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -103,9 +88,7 @@ TEMPLATES = [
     },
 ]
 
-# --------------------------------------------------
-# Banco de Dados
-# --------------------------------------------------
+
 if IS_PRODUCTION:
     DATABASES = {
         'default': {
@@ -125,9 +108,7 @@ else:
         }
     }
 
-# --------------------------------------------------
-# Validação de Senha e Autenticação
-# --------------------------------------------------
+
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
@@ -144,24 +125,18 @@ LOGIN_URL = 'accounts:login'
 LOGIN_REDIRECT_URL = 'rachais:group_list'
 LOGOUT_REDIRECT_URL = 'accounts:login'
 
-# --------------------------------------------------
-# Internacionalização
-# --------------------------------------------------
+
 LANGUAGE_CODE = 'pt-br'
 TIME_ZONE = 'America/Recife'
 USE_I18N = True
 USE_TZ = True
 
-# --------------------------------------------------
-# Arquivos Estáticos (CSS, JavaScript, Imagens)
-# --------------------------------------------------
+
 STATIC_URL = os.environ.get('DJANGO_STATIC_URL', "/static/")
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = [
     BASE_DIR / 'assets',
 ]
 STATICFILES_STORAGE = ('whitenoise.storage.CompressedManifestStaticFilesStorage')
-# --------------------------------------------------
-# Configuração Padrão
-# --------------------------------------------------
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

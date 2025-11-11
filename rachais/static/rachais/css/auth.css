@@ -1,16 +1,13 @@
-/* ===== AUTH LAYOUT ===== */
 html, body { height: 100%; }
 body { min-height: 100vh; }
 
-/* Centraliza o conteúdo das telas de auth (login/register) */
 .auth-body .page-wrapper {
-  min-height: calc(100vh - 72px); /* ajuste se sua topbar tiver outra altura */
+  min-height: calc(100vh - 72px); 
   display: grid;
   place-items: center;
-  padding: 24px;           /* espaço nas bordas em telas pequenas */
+  padding: 24px;         
 }
 
-/* Card base */
 .auth-card {
   width: 100%;
   max-width: 560px;
@@ -21,7 +18,6 @@ body { min-height: 100vh; }
   padding: 28px;
 }
 
-/* Branding / títulos */
 .auth-brand {
   display: flex;
   align-items: center;
@@ -34,7 +30,7 @@ body { min-height: 100vh; }
 .auth-title,
 .auth-subtitle { text-align: center; }
 
-/* Form padrão */
+
 .auth-form .field { margin-bottom: 12px; }
 .auth-label { display: block; margin: 0 0 6px; }
 .auth-input {
@@ -45,7 +41,7 @@ body { min-height: 100vh; }
 }
 .auth-terms { margin: 6px 0 10px; font-size: .9rem; color: #64748b; }
 
-/* Botões */
+
 .auth-button.primary {
   width: 100%;
   padding: 12px 14px;
@@ -57,7 +53,6 @@ body { min-height: 100vh; }
   cursor: pointer;
 }
 
-/* Extras */
 .auth-switch { margin-top: 12px; text-align: center; }
 .auth-switch-link { font-weight: 600; }
 .auth-inline-actions {

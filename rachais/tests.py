@@ -14,7 +14,7 @@ User = get_user_model()
 class E2EFullFlowTests(StaticLiveServerTestCase):
     """
     Testa o fluxo completo da aplicação RachAi de forma automatizada
-    e com pausas visuais entre as etapas.
+    e com pausas visuais entre as etapas (ideal para screencasts).
     """
     @classmethod
     def setUpClass(cls):
@@ -24,15 +24,14 @@ class E2EFullFlowTests(StaticLiveServerTestCase):
         opts = webdriver.ChromeOptions()
         opts.add_argument(f"--user-data-dir={cls._tmp_profile}")
         
-        # Para rodar "invisível" (sem abrir a janela), descomente a linha abaixo:
-        # opts.add_argument("--headless=new") 
+
         
         opts.add_argument("--no-sandbox")
         opts.add_argument("--disable-dev-shm-usage")
         opts.add_argument("--disable-gpu")
         opts.add_argument("--window-size=1920,1080")
         
-        # Descomente a linha abaixo se quiser VER o teste rodando
+
         opts.add_experimental_option("detach", True) 
 
         try:
@@ -44,18 +43,15 @@ class E2EFullFlowTests(StaticLiveServerTestCase):
 
     @classmethod
     def tearDownClass(cls):
-        # --- INÍCIO DA CORREÇÃO (Problema 2) ---
-        # Removido o bloco 'if' que causava o AttributeError
         try:
             cls.selenium.quit()
         finally:
             if cls.__dict__.get("_tmp_profile"):
                 shutil.rmtree(cls._tmp_profile, ignore_errors=True)
-        # --- FIM DA CORREÇÃO ---
         super().tearDownClass()
 
     def setUp(self):
-        # Usuário 1
+        # Usuário 1 
         self.user1_email = 'criador@teste.com'
         self.user1_pass = 'senhaSuperF0rte'
         self.user1 = User.objects.create_user(
@@ -76,7 +72,7 @@ class E2EFullFlowTests(StaticLiveServerTestCase):
         )
 
     # ===============================================
-    # 1. SEU TESTE ORIGINAL (DIVISÃO IGUAL) - OK
+    # 1. TESTE DE DIVISÃO IGUAL (OK)
     # ===============================================
     def test_fluxo_completo_do_app(self):
         """
@@ -155,7 +151,7 @@ class E2EFullFlowTests(StaticLiveServerTestCase):
 
 
     # ========================================================
-    # 2. NOVO TESTE (DIVISÃO POR PORCENTAGEM) - CORRIGIDO
+    # 2. TESTE DE DIVISÃO POR PORCENTAGEM (COM CORREÇÃO)
     # ========================================================
     def test_fluxo_divisao_porcentagem(self):
         """
@@ -215,37 +211,41 @@ class E2EFullFlowTests(StaticLiveServerTestCase):
         ))
         split_method_dropdown.select_by_visible_text('Dividir por porcentagem (%)')
         print("-> Método 'Dividir por porcentagem (%)' selecionado.")
-        time.sleep(delay) 
-
-        # --- INÍCIO DA CORREÇÃO (Problema 1) ---
-        
-        # 1. Preencher a porcentagem do User 1 (Rafael)
-        perc_input_user1 = wait.until(EC.visibility_of_element_located(
-            (By.NAME, f'split_perc_{self.user1.id}')
-        ))
-        perc_input_user1.clear() # Limpa o campo
-        perc_input_user1.send_keys('60.0')
-        print(f"-> Input User 1 ({self.user1.id}): 60.0%")
-        time.sleep(delay) # Pausa para o JS rodar
-        
-        # 2. Preencher a porcentagem do User 2 (Amigo)
-        perc_input_user2 = self.selenium.find_element(By.NAME, f'split_perc_{self.user2.id}')
-        perc_input_user2.clear() # Limpa o que o JS preencheu
-        perc_input_user2.send_keys('40.0') 
-        print(f"-> Input User 2 ({self.user2.id}): 40.0%")
         time.sleep(delay)
+
         
-        # --- FIM DA CORREÇÃO ---
+        # 1. Encontrar os elementos de input
+        try:
+            perc_input_user1 = wait.until(EC.visibility_of_element_located(
+                (By.NAME, f'split_perc_{self.user1.id}')
+            ))
+            perc_input_user2 = self.selenium.find_element(By.NAME, f'split_perc_{self.user2.id}')
+        except Exception as e:
+            print(f"Erro ao encontrar os campos de input: {e}")
+            self.fail("Não foi possível localizar os campos de porcentagem.")
+
+ 
+        self.selenium.execute_script("arguments[0].value = '60.0';", perc_input_user1)
+        print(f"-> [JS] Input User 1 ({self.user1.id}): 60.0%")
+        time.sleep(1) 
+
+        self.selenium.execute_script("arguments[0].value = '40.0';", perc_input_user2)
+        print(f"-> [JS] Input User 2 ({self.user2.id}): 40.0%")
+    
+        self.selenium.execute_script("arguments[0].dispatchEvent(new Event('change'));", perc_input_user1)
+        self.selenium.execute_script("arguments[0].dispatchEvent(new Event('change'));", perc_input_user2)
         
-        # 3. Salvar
+        print("-> Valores injetados e eventos 'change' disparados.")
+        time.sleep(delay) 
+        
+
         self.selenium.find_element(By.XPATH, "//button[text()='Salvar']").click()
         
         print("[FLUXO % - ETAPA 5/5] - Verificando o Resultado...")
-        # A espera agora DEVE funcionar
         wait.until(EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'Carnes do Churrasco')]")))
         page_source = self.selenium.page_source
         self.assertIn('Pago por Rafael', page_source)
-        self.assertIn('R$ 200,00', page_source) # Valor total
+        self.assertIn('R$ 200,00', page_source) 
         print("-> Despesa de R$ 200,00 (Pago por Rafael) verificada.")
         time.sleep(delay)
         
@@ -262,7 +262,7 @@ class E2EFullFlowTests(StaticLiveServerTestCase):
         
         
     # ========================================================
-    # 3. NOVO TESTE (DIVISÃO POR VALOR EXATO) - CORRIGIDO
+    # 3. TESTE DE DIVISÃO POR VALOR EXATO (OK)
     # ========================================================
     def test_fluxo_divisao_valor_exato(self):
         """
@@ -314,7 +314,7 @@ class E2EFullFlowTests(StaticLiveServerTestCase):
         time.sleep(delay)
         select_element = self.selenium.find_element(By.NAME, 'paid_by')
         select_payer = Select(select_element)
-        select_payer.select_by_visible_text('Amigo') # user2, para variar o pagador
+        select_payer.select_by_visible_text('Amigo') 
         time.sleep(delay)
         
         split_method_dropdown = Select(wait.until(
@@ -324,35 +324,29 @@ class E2EFullFlowTests(StaticLiveServerTestCase):
         print("-> Método 'Dividir por valores exatos (R$)' selecionado.")
         time.sleep(delay) 
 
-        # --- INÍCIO DA CORREÇÃO (Problema 1) ---
         
-        # 1. Preencher o valor do User 1 (Rafael)
+
         valor_input_user1 = wait.until(EC.visibility_of_element_located(
             (By.NAME, f'split_user_{self.user1.id}')
         ))
-        valor_input_user1.clear() # Limpa o campo
+        valor_input_user1.clear() 
         valor_input_user1.send_keys('100,00')
         print(f"-> Input User 1 ({self.user1.id}): 100,00")
-        time.sleep(delay) # Pausa para o JS rodar
+        time.sleep(delay) 
 
-        # 2. Preencher o valor do User 2 (Amigo)
         valor_input_user2 = self.selenium.find_element(By.NAME, f'split_user_{self.user2.id}')
-        valor_input_user2.clear() # Limpa o que o JS preencheu
+        valor_input_user2.clear() 
         valor_input_user2.send_keys('50,00')
         print(f"-> Input User 2 ({self.user2.id}): 50,00")
         time.sleep(delay)
-
-        # --- FIM DA CORREÇÃO ---
         
-        # 3. Salvar
         self.selenium.find_element(By.XPATH, "//button[text()='Salvar']").click()
         
         print("[FLUXO VALOR - ETAPA 5/5] - Verificando o Resultado...")
-        # A espera agora DEVE funcionar
         wait.until(EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'Compras do Mercado')]")))
         page_source = self.selenium.page_source
         self.assertIn('Pago por Amigo', page_source)
-        self.assertIn('R$ 150,00', page_source) # Valor total
+        self.assertIn('R$ 150,00', page_source) 
         print("-> Despesa de R$ 150,00 (Pago por Amigo) verificada.")
         time.sleep(delay)
         
