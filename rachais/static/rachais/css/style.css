@@ -268,3 +268,91 @@ input:focus, textarea:focus, select:focus{
   .panel{ min-height: 320px; }
   body > a:nth-of-type(n+2){ top: 0; float: none; margin: 0 8px; }
 }
+
+.debts-card {
+  margin-top: 1.5rem;
+}
+
+.debts-tabs {
+  display: flex;
+  gap: .5rem;
+  margin-bottom: 1rem;
+}
+
+.debts-tab-radio {
+  display: none;
+}
+
+.debts-tab-label {
+  flex: 1;
+  padding: .4rem .6rem;
+  text-align: center;
+  background: #ecf2ff;
+  border-radius: .6rem;
+  cursor: pointer;
+  font-weight: 600;
+  color: #2d4aac;
+  transition: background .2s ease;
+}
+
+.debts-tab-radio:checked + .debts-tab-label {
+  background: linear-gradient(120deg, #3b77ff, #5690ff);
+  color: #fff;
+}
+
+.debts-panels {
+  position: relative;
+}
+
+.debts-panel {
+  display: none;
+}
+
+#tab-pendentes:checked ~ .debts-panels .debts-panel--pending,
+#tab-quitadas:checked ~ .debts-panels .debts-panel--paid {
+  display: block;
+}
+
+.debts-subtitle {
+  font-weight: 600;
+  margin-bottom: .4rem;
+}
+
+.debts-list {
+  display: grid;
+  gap: .75rem;
+}
+
+.debts-item {
+  background: #f5f7ff;
+  border-radius: .75rem;
+  padding: .75rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: .8rem;
+}
+
+.debts-item--paid {
+  background: #eef5ef;
+}
+
+.debts-actions {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+}
+
+.debts-amount {
+  font-weight: 600;
+  color: #2d4aac;
+}
+
+.debts-amount.positive {
+  color: #1d8f4d;
+}
+
+.debts-date {
+  font-size: .75rem;
+  color: #667;
+}

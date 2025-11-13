@@ -16,6 +16,90 @@
         {% endfor %}
       </div>
     </div>
+    <div class="sidebar-card debts-card">
+      <div class="sidebar-title">Minhas Dívidas</div>
+
+      <div class="debts-tabs">
+        <input type="radio" id="tab-pendentes" name="debts-tab" class="debts-tab-radio" checked>
+        <label for="tab-pendentes" class="debts-tab-label">Pendentes</label>
+
+        <input type="radio" id="tab-quitadas" name="debts-tab" class="debts-tab-radio">
+        <label for="tab-quitadas" class="debts-tab-label">Quitadas</label>
+      </div>
+
+      <div class="debts-panels">
+        <div class="debts-panel debts-panel--pending">
+          {% if my_debts.pending_to_pay or my_debts.pending_to_receive %}
+            {% if my_debts.pending_to_pay %}
+              <p class="debts-subtitle">Você deve:</p>
+              <ul class="debts-list">
+                {% for debt in my_debts.pending_to_pay %}
+                  <li class="debts-item">
+                    <div>
+                      <strong>{{ debt.counterparty.get_full_name|default:debt.counterparty.username }}</strong>
+                      <small class="debts-group">{{ debt.group.name }}</small>
+                    </div>
+                    <div class="debts-actions">
+                      <span class="debts-amount">R$ {{ debt.amount|localize }}</span>
+                      <form method="post" action="{% url 'rachais:pay_debt' %}" onsubmit="return confirm('Confirmar pagamento de R$ {{ debt.amount|localize }} para {{ debt.counterparty.get_full_name|default:debt.counterparty.username }}?');">
+                        {% csrf_token %}
+                        <input type="hidden" name="group_id" value="{{ debt.group.id }}">
+                        <input type="hidden" name="receiver_id" value="{{ debt.counterparty.id }}">
+                        <input type="hidden" name="amount" value="{{ debt.amount|floatformat:2 }}">
+                        <button type="submit" class="btn-tertiary">Pagar</button>
+                      </form>
+                    </div>
+                  </li>
+                {% endfor %}
+              </ul>
+            {% endif %}
+
+            {% if my_debts.pending_to_receive %}
+              <p class="debts-subtitle">Devem a você:</p>
+              <ul class="debts-list">
+                {% for debt in my_debts.pending_to_receive %}
+                  <li class="debts-item">
+                    <div>
+                      <strong>{{ debt.counterparty.get_full_name|default:debt.counterparty.username }}</strong>
+                      <small class="debts-group">{{ debt.group.name }}</small>
+                    </div>
+                    <span class="debts-amount positive">R$ {{ debt.amount|localize }}</span>
+                  </li>
+                {% endfor %}
+              </ul>
+            {% endif %}
+          {% else %}
+            <p class="sidebar-empty">Nenhuma pendência no momento.</p>
+          {% endif %}
+        </div>
+
+        <div class="debts-panel debts-panel--paid">
+          {% if my_debts.paid %}
+            <ul class="debts-list">
+              {% for payment in my_debts.paid %}
+                <li class="debts-item debts-item--paid">
+                  <div>
+                    {% if payment.payer_id == user.id %}
+                      Você pagou <strong>{{ payment.receiver.get_full_name|default:payment.receiver.username }}</strong>
+                    {% else %}
+                      <strong>{{ payment.payer.get_full_name|default:payment.payer.username }}</strong> pagou você
+                    {% endif %}
+                    <small class="debts-group">{{ payment.group.name }}</small>
+                  </div>
+                  <div class="debts-meta">
+                    <span class="debts-amount">R$ {{ payment.amount|localize }}</span>
+                    <span class="debts-date">{{ payment.created_at|date:"d/m/Y H:i" }}</span>
+                  </div>
+                </li>
+              {% endfor %}
+            </ul>
+          {% else %}
+            <p class="sidebar-empty">Nenhum pagamento registrado.</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
   </aside>
 
   <section class="dashboard-main">

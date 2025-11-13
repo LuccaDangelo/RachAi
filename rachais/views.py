@@ -4,15 +4,14 @@ from typing import Optional
 from collections import defaultdict
 from types import SimpleNamespace
 from django.db import transaction
-from .models import Group, Participant, Expense, ExpenseSplit
+from .models import Group, Participant, Expense, ExpenseSplit, Payment
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AbstractUser
 from django.db.models import Q
-
-from .models import Group, Participant, Expense
+from django.views.decorators.http import require_POST
 
 User = get_user_model()
 
@@ -79,6 +78,11 @@ def _calculate_balances(group):
 
         for split in splits_for_this_expense:
             balances[split.user.id] -= split.amount_owed
+    
+    payments = group.payments.select_related("payer", "receiver").all()
+    for payment in payments:
+        balances[payment.payer_id] += payment.amount
+        balances[payment.receiver_id] -= payment.amount
 
     return dict(balances)
 
@@ -117,6 +121,31 @@ def _calculate_settlements(balances, participants_qs):
     
     return settlements
 
+def _my_debts_snapshot(user):
+    pending_to_pay = []
+    pending_to_receive = []
+    paid = []
+
+    sidebar_groups = list(_sidebar_groups_qs(user))
+
+    for group in sidebar_groups:
+        participants = list(group.participants.select_related("user"))
+        balances = _calculate_balances(group)
+        settlements = _calculate_settlements(balances, participants)
+
+        for settlement in settlements:
+            if settlement.person_from.id == user.id:
+                pending_to_pay.append({"group": group, "counterparty": settlement.person_to, "amount": settlement.amount})
+            elif settlement.person_to.id == user.id:
+                pending_to_receive.append({"group": group, "counterparty": settlement.person_from, "amount": settlement.amount})
+
+        paid_qs = group.payments.filter(Q(payer=user) | Q(receiver=user)).select_related("payer", "receiver")
+        
+        for payment in paid_qs:
+            paid.append(payment)
+
+    return {"pending_to_pay": pending_to_pay, "pending_to_receive": pending_to_receive, "paid": sorted(paid, key=lambda p: p.created_at, reverse=True),}
+
 
 @login_required
 def group_list(request):
@@ -140,6 +169,8 @@ def group_detail(request, group_id):
     balances = _calculate_balances(group) 
     
     settlements = _calculate_settlements(balances, participants)
+
+    my_debts = _my_debts_snapshot(request.user)
 
     for s in settlements:
         setattr(s, "from_name", _display_name(s.person_from))
@@ -184,6 +215,7 @@ def group_detail(request, group_id):
             "participants": participants,
             "total": total,
             "settlements": settlements,
+            "my_debts": my_debts,
         }
     )
 
@@ -481,3 +513,63 @@ def add_expense(request, group_id):
 
 
     return render(request, "rachais/add_expense.html", context)
+
+@require_POST
+@login_required
+def pay_debt(request):
+    group_id = request.POST.get("group_id")
+    receiver_id = request.POST.get("receiver_id")
+    amount_raw = request.POST.get("amount")
+    print(f"Raw amount received: '{amount_raw}'")
+
+    if not (group_id and receiver_id and amount_raw):
+        messages.error(request, "Requisição inválida.")
+        return redirect("rachais:group_list")
+    
+    group = get_object_or_404(Group, pk=group_id)
+    if not Participant.objects.filter(group=group, user=request.user).exists():
+        messages.error(request, "Você não participa deste grupo.")
+        return redirect("rachais:group_detail", group_id=group.id)
+    
+    if amount_raw:
+        amount_raw = amount_raw.replace(',', '.').strip()
+
+    try:
+        amount = Decimal(amount_raw)
+    except (InvalidOperation, TypeError):
+        messages.error(request, "Valor inválido.")
+        return redirect("rachais:group_detail", group_id=group.id)
+    
+    participants = list(group.participants.select_related("user"))
+    balances = _calculate_balances(group)
+    settlements = _calculate_settlements(balances, participants)
+
+    candidate = next(
+        (
+            s for s in settlements
+            if s.person_from.id == request.user.id
+            and s.person_to.id == int(receiver_id)
+        ),
+        None,
+    )
+
+    if candidate is None:
+        messages.error(request, "Não encontramos essa dívida ou ela já foi quitada.")
+        return redirect("rachais:group_detail", group_id=group.id)
+    
+    transfer_amount = candidate.amount.quantize(Decimal("0.01"))
+    if amount.quantize(Decimal("0.01")) != transfer_amount:
+        messages.error(request, "O valor informado não corresponde ao saldo atual dessa dívida.")
+        return redirect("rachais:group_detail", group_id=group.id)
+    
+    Payment.objects.create(
+        group=group,
+        payer=request.user,
+        receiver_id=receiver_id,
+        amount=transfer_amount,
+        created_by=request.user,
+    )
+    messages.success(request, "Pagamento registrado com sucesso!")
+    return redirect("rachais:group_detail", group_id=group.id)
+
+    
