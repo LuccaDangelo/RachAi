@@ -360,3 +360,93 @@ class E2EFullFlowTests(StaticLiveServerTestCase):
         print("-> Balanço de saldos (100/50) verificado com sucesso.")
         time.sleep(delay)
         print("\n--> Teste de DIVISÃO VALOR EXATO concluído com sucesso!")
+
+    # ========================================================
+    # 4. TESTE: MARCAR DÍVIDA COMO PAGA
+    # ========================================================
+    def test_marcar_divida_como_paga(self):
+        """
+        Fluxo: criar grupo, adicionar amigo, criar despesa,
+        depois registrar pagamento e verificar que a dívida some.
+        """
+        print("\n\n" + "="*50)
+        print("INICIANDO TESTE E2E: MARCAR DÍVIDA COMO PAGA")
+        print("="*50)
+
+        wait = WebDriverWait(self.selenium, 10)
+        delay = 3
+
+        
+        login_url = self.live_server_url + reverse('accounts:login')
+        self.selenium.get(login_url)
+        email_input = wait.until(EC.presence_of_element_located((By.NAME, 'email')))
+        email_input.send_keys(self.user1.email)
+        self.selenium.find_element(By.NAME, 'password').send_keys(self.user1_pass)
+        self.selenium.find_element(By.CSS_SELECTOR, 'button[type="submit"]').click()
+        wait.until(EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'Comece criando um grupo')]")))
+        time.sleep(delay)
+
+        
+        self.selenium.find_element(By.LINK_TEXT, 'Criar grupo').click()
+        nome_grupo_input = wait.until(EC.presence_of_element_located((By.NAME, 'name')))
+        nome_grupo_input.send_keys('Grupo Pagamento')
+        time.sleep(delay)
+        self.selenium.find_element(By.XPATH, "//button[text()='Criar']").click()
+        wait.until(EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'Grupo Pagamento')]")))
+        time.sleep(delay)
+
+        
+        self.selenium.find_element(By.NAME, 'identifier').send_keys(self.user2_email)
+        time.sleep(delay)
+        self.selenium.find_element(By.XPATH, "//button[text()='+ Convidar']").click()
+        wait.until(EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'adicionado(a) com sucesso!')]")))
+        wait.until(EC.presence_of_element_located((By.XPATH, "//li[@class='pill' and text()='Amigo']")))
+        time.sleep(delay)
+
+        
+        self.selenium.find_element(By.LINK_TEXT, '+ Adicionar despesa').click()
+        description_input = wait.until(EC.presence_of_element_located((By.NAME, 'description')))
+        description_input.send_keys('Conta do Bar')
+        time.sleep(delay)
+        self.selenium.find_element(By.NAME, 'amount').send_keys('100,00')
+        time.sleep(delay)
+        select_element = self.selenium.find_element(By.NAME, 'paid_by')
+        Select(select_element).select_by_visible_text('Rafael')
+        time.sleep(delay)
+        
+        self.selenium.find_element(By.XPATH, "//button[text()='Salvar']").click()
+
+        wait.until(EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'Conta do Bar')]")))
+        time.sleep(delay)
+
+        summary_div = wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'balance-summary')))
+        summary_text = summary_div.text
+        self.assertIn('Amigo', summary_text)
+        self.assertIn('a pagar', summary_text)
+        self.assertIn('R$ 50,00', summary_text)
+
+        
+        pagar_btn = wait.until(
+            EC.element_to_be_clickable(
+                (By.XPATH, "//button[contains(., 'Marcar como pago') or contains(., 'Registrar pagamento')]")
+            )
+        )
+        pagar_btn.click()
+        time.sleep(delay)
+
+        
+        amount_input = wait.until(EC.presence_of_element_located((By.NAME, 'amount')))
+        
+        if not amount_input.get_attribute("value"):
+            amount_input.send_keys('50,00')
+        time.sleep(delay)
+
+        self.selenium.find_element(By.XPATH, "//button[text()='Confirmar' or text()='Pagar']").click()
+
+        wait.until(EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'Pagamento registrado com sucesso')]")))
+        time.sleep(delay)
+
+        summary_div = wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'balance-summary')))
+        summary_text = summary_div.text
+        self.assertNotIn('R$ 50,00', summary_text)
+        print("\n--> Teste de MARCAR DÍVIDA COMO PAGA concluído com sucesso!")    
