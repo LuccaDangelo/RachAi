@@ -7,6 +7,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait, Select
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.alert import Alert
 
 User = get_user_model()
 
@@ -48,6 +49,7 @@ class E2EFullFlowTests(StaticLiveServerTestCase):
         super().tearDownClass()
 
     def setUp(self):
+        
         self.user1_email = 'criador@teste.com'
         self.user1_pass = 'senhaSuperF0rte'
         self.user1 = User.objects.create_user(
@@ -198,7 +200,7 @@ class E2EFullFlowTests(StaticLiveServerTestCase):
         time.sleep(delay)
         select_element = self.selenium.find_element(By.NAME, 'paid_by')
         select_payer = Select(select_element)
-        select_payer.select_by_visible_text('Rafael') # user1
+        select_payer.select_by_visible_text('Rafael') 
         time.sleep(delay)
         
         split_method_dropdown = Select(wait.until(
@@ -361,8 +363,9 @@ class E2EFullFlowTests(StaticLiveServerTestCase):
     # ========================================================
     def test_marcar_divida_como_paga(self):
         """
-        Fluxo: criar grupo, adicionar amigo, criar despesa,
-        depois registrar pagamento e verificar que a dívida some.
+        Fluxo: criar grupo, adicionar amigo, criar despesa (divisão igual),
+        verificar que o Amigo deve, logar como Amigo, clicar em Pagar
+        e checar que a dívida some das pendentes e entra em Quitadas.
         """
         print("\n\n" + "="*50)
         print("INICIANDO TESTE E2E: MARCAR DÍVIDA COMO PAGA")
@@ -411,18 +414,19 @@ class E2EFullFlowTests(StaticLiveServerTestCase):
         select_element = self.selenium.find_element(By.NAME, 'paid_by')
         Select(select_element).select_by_visible_text('Rafael')
         time.sleep(delay)
+
         self.selenium.find_element(By.XPATH, "//button[text()='Salvar']").click()
         wait.until(EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'Conta do Bar')]")))
         print("-> Despesa 'Conta do Bar' (R$ 100,00) adicionada.")
         time.sleep(delay)
 
-        print("[PAGAMENTO - ETAPA 5/10] - Verificando dívida do Amigo...")
+        print("[PAGAMENTO - ETAPA 5/10] - Verificando dívida do Amigo no resumo...")
         summary_div = wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'balance-summary')))
         summary_text = summary_div.text
         self.assertIn('Amigo', summary_text)
         self.assertIn('a pagar', summary_text)
         self.assertIn('R$ 50,00', summary_text)
-        print("-> Dívida de R$ 50,00 (Amigo) verificada.")
+        print("-> Dívida de R$ 50,00 (Amigo) verificada no resumo.")
         time.sleep(delay)
 
         print("[PAGAMENTO - ETAPA 6/10] - Fazendo logout do Rafael...")
@@ -436,36 +440,65 @@ class E2EFullFlowTests(StaticLiveServerTestCase):
         email_input.send_keys(self.user2_email)
         self.selenium.find_element(By.NAME, 'password').send_keys(self.user2_pass)
         self.selenium.find_element(By.CSS_SELECTOR, 'button[type="submit"]').click()
-        wait.until(EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'Comece criando um grupo') or contains(text(), 'Grupo Pagamento')]")))
+        wait.until(EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'Seus Grupos') or contains(text(), 'Comece criando um grupo')]")))
         print("-> Login do Amigo realizado com sucesso.")
         time.sleep(delay)
 
-        print("[PAGAMENTO - ETAPA 8/10] - Navegando até o grupo...")
+        print("[PAGAMENTO - ETAPA 8/10] - Navegando até o grupo 'Grupo Pagamento'...")
         self.selenium.find_element(By.LINK_TEXT, 'Grupo Pagamento').click()
         wait.until(EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'Conta do Bar')]")))
         time.sleep(delay)
 
-        print("[PAGAMENTO - ETAPA 9/10] - Clicando em 'Marcar como pago'...")
+        print("[PAGAMENTO - ETAPA 9/10] - Clicando em 'Pagar' na lista de dívidas pendentes...")
+        
+        try:
+            tab_pendentes = self.selenium.find_element(By.ID, 'tab-pendentes')
+            if not tab_pendentes.is_selected():
+                tab_pendentes.click()
+                time.sleep(1)
+        except:
+            pass
+        
         pagar_btn = wait.until(
             EC.element_to_be_clickable(
-                (By.XPATH, "//button[contains(., 'Marcar como pago') or contains(., 'Registrar pagamento')]")
+                (By.XPATH, "//div[contains(@class,'debts-panel--pending')]//button[@class='btn-tertiary' and normalize-space(text())='Pagar']")
             )
         )
+        
         pagar_btn.click()
+        time.sleep(1)
+        
+        try:
+            alert = Alert(self.selenium)
+            alert.accept()
+            print("-> Alert de confirmação aceito.")
+        except:
+            print("-> Nenhum alert encontrado (pode já ter sido processado).")
+        
         time.sleep(delay)
 
-        print("[PAGAMENTO - ETAPA 10/10] - Confirmando pagamento...")
-        amount_input = wait.until(EC.presence_of_element_located((By.NAME, 'amount')))
-        if not amount_input.get_attribute("value"):
-            amount_input.send_keys('50,00')
-        time.sleep(delay)
-        self.selenium.find_element(By.XPATH, "//button[text()='Confirmar' or text()='Pagar']").click()
-
-        wait.until(EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'Pagamento registrado com sucesso')]")))
+        print("[PAGAMENTO - ETAPA 10/10] - Aguardando processamento do pagamento...")
         time.sleep(delay)
 
-        summary_div = wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'balance-summary')))
-        summary_text = summary_div.text
-        self.assertNotIn('R$ 50,00', summary_text)
-        print("-> Dívida quitada com sucesso!")
+        print("[PAGAMENTO - ETAPA 11/10] - Verificando que dívida sumiu das pendentes...")
+        self.selenium.find_element(By.ID, 'tab-pendentes').click()
+        time.sleep(1)
+        pending_panel = self.selenium.find_element(By.CSS_SELECTOR, '.debts-panel--pending')
+        pending_html = pending_panel.get_attribute('innerText')
+        
+        if 'Nenhuma pendência' in pending_html:
+            print("-> Confirmado: 'Nenhuma pendência no momento.'")
+        else:
+            self.assertNotIn('R$ 50,00', pending_html) or self.assertIn('Nenhuma pendência', pending_html)
+            print("-> Dívida de R$ 50,00 não aparece mais nas pendentes.")
+
+        print("[PAGAMENTO - ETAPA 12/10] - Verificando que pagamento aparece em quitadas...")
+        self.selenium.find_element(By.ID, 'tab-quitadas').click()
+        time.sleep(1)
+        paid_panel = self.selenium.find_element(By.CSS_SELECTOR, '.debts-panel--paid')
+        paid_html = paid_panel.get_attribute('innerText')
+        self.assertIn('R$ 50,00', paid_html)
+        self.assertIn('Rafael', paid_html)
+        print("-> Pagamento de R$ 50,00 para Rafael aparece na aba de quitadas.")
+
         print("\n--> Teste de MARCAR DÍVIDA COMO PAGA concluído com sucesso!")
