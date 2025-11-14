@@ -1,20 +1,8 @@
 
 import os
 from pathlib import Path
+from dotenv import load_dotenv
 from django.core.exceptions import ImproperlyConfigured
-
-try:
-    from dotenv import load_dotenv
-except ImportError:  # pragma: no cover - optional dependency
-    def load_dotenv(*args, **kwargs):
-        return False
-
-try:
-    import whitenoise  # noqa: F401
-except ImportError:  # pragma: no cover - optional dependency
-    WHITENOISE_INSTALLED = False
-else:
-    WHITENOISE_INSTALLED = True
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -63,22 +51,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'whitenoise.runserver_nostatic',
+    'rachais',
 ]
-
-if WHITENOISE_INSTALLED:
-    INSTALLED_APPS.append('whitenoise.runserver_nostatic')
-
-INSTALLED_APPS.append('rachais')
 
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-]
-
-if WHITENOISE_INSTALLED:
-    MIDDLEWARE.append('whitenoise.middleware.WhiteNoiseMiddleware')
-
-MIDDLEWARE += [
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -157,9 +137,6 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = [
     BASE_DIR / 'assets',
 ]
-if WHITENOISE_INSTALLED:
-    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-else:
-    STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
+STATICFILES_STORAGE = ('whitenoise.storage.CompressedManifestStaticFilesStorage')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
