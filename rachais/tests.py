@@ -24,14 +24,11 @@ class E2EFullFlowTests(StaticLiveServerTestCase):
         opts = webdriver.ChromeOptions()
         opts.add_argument(f"--user-data-dir={cls._tmp_profile}")
         
-
-        
         opts.add_argument("--no-sandbox")
         opts.add_argument("--disable-dev-shm-usage")
         opts.add_argument("--disable-gpu")
         opts.add_argument("--window-size=1920,1080")
         
-
         opts.add_experimental_option("detach", True) 
 
         try:
@@ -51,7 +48,6 @@ class E2EFullFlowTests(StaticLiveServerTestCase):
         super().tearDownClass()
 
     def setUp(self):
-        # Usuário 1 
         self.user1_email = 'criador@teste.com'
         self.user1_pass = 'senhaSuperF0rte'
         self.user1 = User.objects.create_user(
@@ -61,7 +57,6 @@ class E2EFullFlowTests(StaticLiveServerTestCase):
             password=self.user1_pass
         )
 
-        # Usuário 2 
         self.user2_email = 'amigo@teste.com'
         self.user2_pass = 'outraSenha123'
         self.user2 = User.objects.create_user(
@@ -214,7 +209,6 @@ class E2EFullFlowTests(StaticLiveServerTestCase):
         time.sleep(delay)
 
         
-        # 1. Encontrar os elementos de input
         try:
             perc_input_user1 = wait.until(EC.visibility_of_element_located(
                 (By.NAME, f'split_perc_{self.user1.id}')
@@ -361,6 +355,7 @@ class E2EFullFlowTests(StaticLiveServerTestCase):
         time.sleep(delay)
         print("\n--> Teste de DIVISÃO VALOR EXATO concluído com sucesso!")
 
+
     # ========================================================
     # 4. TESTE: MARCAR DÍVIDA COMO PAGA
     # ========================================================
@@ -376,7 +371,7 @@ class E2EFullFlowTests(StaticLiveServerTestCase):
         wait = WebDriverWait(self.selenium, 10)
         delay = 3
 
-        
+        print("[PAGAMENTO - ETAPA 1/10] - Realizando Login (Rafael)...")
         login_url = self.live_server_url + reverse('accounts:login')
         self.selenium.get(login_url)
         email_input = wait.until(EC.presence_of_element_located((By.NAME, 'email')))
@@ -384,26 +379,29 @@ class E2EFullFlowTests(StaticLiveServerTestCase):
         self.selenium.find_element(By.NAME, 'password').send_keys(self.user1_pass)
         self.selenium.find_element(By.CSS_SELECTOR, 'button[type="submit"]').click()
         wait.until(EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'Comece criando um grupo')]")))
+        print("-> Login realizado com sucesso.")
         time.sleep(delay)
 
-        
+        print("[PAGAMENTO - ETAPA 2/10] - Criando Grupo...")
         self.selenium.find_element(By.LINK_TEXT, 'Criar grupo').click()
         nome_grupo_input = wait.until(EC.presence_of_element_located((By.NAME, 'name')))
         nome_grupo_input.send_keys('Grupo Pagamento')
         time.sleep(delay)
         self.selenium.find_element(By.XPATH, "//button[text()='Criar']").click()
         wait.until(EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'Grupo Pagamento')]")))
+        print("-> Grupo 'Grupo Pagamento' criado com sucesso.")
         time.sleep(delay)
 
-        
+        print("[PAGAMENTO - ETAPA 3/10] - Adicionando Participante...")
         self.selenium.find_element(By.NAME, 'identifier').send_keys(self.user2_email)
         time.sleep(delay)
         self.selenium.find_element(By.XPATH, "//button[text()='+ Convidar']").click()
         wait.until(EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'adicionado(a) com sucesso!')]")))
         wait.until(EC.presence_of_element_located((By.XPATH, "//li[@class='pill' and text()='Amigo']")))
+        print(f"-> Participante '{self.user2_email}' adicionado com sucesso.")
         time.sleep(delay)
 
-        
+        print("[PAGAMENTO - ETAPA 4/10] - Adicionando Despesa...")
         self.selenium.find_element(By.LINK_TEXT, '+ Adicionar despesa').click()
         description_input = wait.until(EC.presence_of_element_located((By.NAME, 'description')))
         description_input.send_keys('Conta do Bar')
@@ -413,19 +411,41 @@ class E2EFullFlowTests(StaticLiveServerTestCase):
         select_element = self.selenium.find_element(By.NAME, 'paid_by')
         Select(select_element).select_by_visible_text('Rafael')
         time.sleep(delay)
-        
         self.selenium.find_element(By.XPATH, "//button[text()='Salvar']").click()
-
         wait.until(EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'Conta do Bar')]")))
+        print("-> Despesa 'Conta do Bar' (R$ 100,00) adicionada.")
         time.sleep(delay)
 
+        print("[PAGAMENTO - ETAPA 5/10] - Verificando dívida do Amigo...")
         summary_div = wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'balance-summary')))
         summary_text = summary_div.text
         self.assertIn('Amigo', summary_text)
         self.assertIn('a pagar', summary_text)
         self.assertIn('R$ 50,00', summary_text)
+        print("-> Dívida de R$ 50,00 (Amigo) verificada.")
+        time.sleep(delay)
 
-        
+        print("[PAGAMENTO - ETAPA 6/10] - Fazendo logout do Rafael...")
+        self.selenium.find_element(By.LINK_TEXT, 'Sair').click()
+        time.sleep(delay)
+
+        print("[PAGAMENTO - ETAPA 7/10] - Fazendo login com o Amigo...")
+        login_url = self.live_server_url + reverse('accounts:login')
+        self.selenium.get(login_url)
+        email_input = wait.until(EC.presence_of_element_located((By.NAME, 'email')))
+        email_input.send_keys(self.user2_email)
+        self.selenium.find_element(By.NAME, 'password').send_keys(self.user2_pass)
+        self.selenium.find_element(By.CSS_SELECTOR, 'button[type="submit"]').click()
+        wait.until(EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'Comece criando um grupo') or contains(text(), 'Grupo Pagamento')]")))
+        print("-> Login do Amigo realizado com sucesso.")
+        time.sleep(delay)
+
+        print("[PAGAMENTO - ETAPA 8/10] - Navegando até o grupo...")
+        self.selenium.find_element(By.LINK_TEXT, 'Grupo Pagamento').click()
+        wait.until(EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'Conta do Bar')]")))
+        time.sleep(delay)
+
+        print("[PAGAMENTO - ETAPA 9/10] - Clicando em 'Marcar como pago'...")
         pagar_btn = wait.until(
             EC.element_to_be_clickable(
                 (By.XPATH, "//button[contains(., 'Marcar como pago') or contains(., 'Registrar pagamento')]")
@@ -434,13 +454,11 @@ class E2EFullFlowTests(StaticLiveServerTestCase):
         pagar_btn.click()
         time.sleep(delay)
 
-        
+        print("[PAGAMENTO - ETAPA 10/10] - Confirmando pagamento...")
         amount_input = wait.until(EC.presence_of_element_located((By.NAME, 'amount')))
-        
         if not amount_input.get_attribute("value"):
             amount_input.send_keys('50,00')
         time.sleep(delay)
-
         self.selenium.find_element(By.XPATH, "//button[text()='Confirmar' or text()='Pagar']").click()
 
         wait.until(EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'Pagamento registrado com sucesso')]")))
@@ -449,4 +467,5 @@ class E2EFullFlowTests(StaticLiveServerTestCase):
         summary_div = wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'balance-summary')))
         summary_text = summary_div.text
         self.assertNotIn('R$ 50,00', summary_text)
-        print("\n--> Teste de MARCAR DÍVIDA COMO PAGA concluído com sucesso!")    
+        print("-> Dívida quitada com sucesso!")
+        print("\n--> Teste de MARCAR DÍVIDA COMO PAGA concluído com sucesso!")
