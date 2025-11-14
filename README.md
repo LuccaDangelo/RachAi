@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/rachai.png" alt="RachAi Logo">
+  <img src="assets/rachai.png" alt="RachAi Logo">
 </p>
 
 # Projeto RachAi
@@ -21,7 +21,9 @@ RachAi é um aplicativo desenvolvido para simplificar a divisão de despesas ent
 - [Screencast do site funcional](https://youtu.be/n-TJ8coBneE)
 - [Screencast de Testes Automatizados (Entrega 3)](https://youtu.be/8Kbwe1w_Krs)
 - [Screencast das Novas Histórias de Usuário (Entrega 3)](https://www.youtube.com/watch?v=a_YfVmuAzR4)
-- [Link para o Teste CI/CD](LINK_AQUI)
+- [Link para o Teste CI/CD (Entrega 3)](https://youtu.be/Fv5gN8yQNqw)
+- [Link para o Teste CI/CD (Entrega 4)](LINK_AQUI)
+- [Documentação de Contribuição (CONTRIBUTING.md)](CONTRIBUTING.md)
 
 </details>
 
@@ -57,21 +59,21 @@ Foi desenvolvido um protótipo de baixa fidelidade para visualizar os fluxos de 
 - **Screencast:** [🎥 Assista ao screencast do site funcional no YouTube aqui](https://youtu.be/n-TJ8coBneE)
 
 - **Quadro da Sprint 2 (Jira):**
-  *Backlog Sprint 2:*
-  ![Backlog da Sprint 2](assets/backlog_sprint2.png)
-  *Quadro da Sprint 2:*
-  ![Quadro da Sprint 2](assets/quadro_sprint2.png)
+  *Backlog Sprint 2:*
+  ![Backlog da Sprint 2](assets/backlog_sprint2.png)
+  *Quadro da Sprint 2:*
+  ![Quadro da Sprint 2](assets/quadro_sprint2.png)
 
 - **Bug Tracker:**
-  ![Bug Tracker](assets/Issues_bugtracker.png)
+  ![Bug Tracker](assets/Issues_bugtracker.png)
 
 - **Colaboração na Prática: Nosso Desenvolvimento em Par:**
-  Nesta entrega, nossa grande aposta foi na programação em par.É essa abordagem que fez toda a diferença. Trabalhando lado a lado, conseguimos discutir ideias em tempo real, revisar o código no momento em que era escrito e encontrar soluções mais criativas para os desafios. O resultado não foi apenas um código mais limpo e com menos bugs, mas também um time mais integrado e um aprendizado muito maior para todos.
-  
-  As duplas foram organizadas da seguinte forma:
-  * **Rafael Coutinho Lima** e **Guilherme Tolentino Leitão de Melo**
-  * **João Eduardo Azevedo de Andrade** e **Lucca Albuquerque D'Angelo**
-  * **Marcelo Asfora de Menezes** e **Pedro Coutinho da Silva**
+  Nesta entrega, nossa grande aposta foi na programação em par.É essa abordagem que fez toda a diferença. Trabalhando lado a lado, conseguimos discutir ideias em tempo real, revisar o código no momento em que era escrito e encontrar soluções mais criativas para os desafios. O resultado não foi apenas um código mais limpo e com menos bugs, mas também um time mais integrado e um aprendizado muito maior para todos.
+  
+  As duplas foram organizadas da seguinte forma:
+  * **Rafael Coutinho Lima** e **Guilherme Tolentino Leitão de Melo**
+  * **João Eduardo Azevedo de Andrade** e **Lucca Albuquerque D'Angelo**
+  * **Marcelo Asfora de Menezes** e **Pedro Coutinho da Silva**
 
 </details>
 
@@ -97,8 +99,36 @@ O projeto continua sendo gerenciadoD utilizando a metodologia Scrum.
 - [➡️ Acesse o link para o Teste CI/CD aqui](https://youtu.be/Fv5gN8yQNqw)
 
 ### Colaboração em Par:
-Na Sprint 3, nós permanecemos no "pair programming" e isso já tinha virado rotina. Ficou natural simplesmente entrar no Discord, compartilhar a tela e começar a implementação das histórias.
+Programação em Par (atualização-Entrega 3):Na Sprint 3, nós permanecemos no "pair programming" e isso já tinha virado rotina. Ficou natural adolescente entrar no Discord, compartilhar a tela e começar a implementação das histórias.
 Essa dinâmica tornou η caça aos bugs muito mais eficiente e o desenvolvimento das novas *features*, como os testes automatizados. A troca constante de conhecimento, aprendemos juntos, corrigimos juntos.
+
+</details>
+
+<details>
+<summary><h2>Quarta Entrega</h2></summary>
+
+### Gerenciamento Ágil (JIRA)
+**Quadro da Sprint 4:**
+![Print do Quadro da Sprint 4](assets/quadro_sprint4.png)
+
+### Uso do Issue/bug tracker (no GitHub)
+**Bug Tracker (Sprint 4):**
+![Bug Tracker da Sprint 4](assets/bugtracker4.png)
+
+### Screencasts e Deployment
+- **Deployment das Novas Histórias:** [🎥 Screencast das Novas Funcionalidades (Entrega 4)](LINK_YOUTUBE_AQUI)
+- **Testes de Sistema (E2E) Automatizados:** [🎥 Screencast dos Testes Automatizados (Entrega 4)](LINK_YOUTUBE_AQUI)
+
+### CI/CD com Build e Deployment Automatizado
+Pipeline alterada com adição dos testes automatizados.
+- **Screencast do Processo de Build/Deployment:** [🎥 Assista ao screencast do processo de CI/CD aqui](LINK_YOUTUBE_AQUI)
+
+### Colaboração em Par (Atualização)
+*Programação em Par (atualização-Entrega 4): Com o avanço do projeto, a programação em par foi se tornando uma prática cada vez mais natural para nós, principalmente nos momentos em que surgiam dúvidas ou problemas mais difíceis. Nessas horas, trabalhar em dupla acelerava a busca por soluções e deixava o processo menos estressante. Ao mesmo tempo, aprendemos a equilibrar: quando a tarefa exigia mais concentração, cada um seguia sozinho. Esse equilíbrio entre colaboração e autonomia fez diferença tanto na qualidade do código quanto no entrosamento do grupo. No final, sentimos que a programação em par não só ajudou a superar desafios técnicos, mas também fortaleceu a confiança entre os membros da equipe.*
+
+### Documentação (CONTRIBUTING.md)
+Documentação clara e objetiva conduzindo qualquer pessoa a montar o ambiente corretamente e contribuir com o projeto.
+- [➡️ Acesse o CONTRIBUTING.md aqui](CONTRIBUTING.md)
 
 </details>
 
