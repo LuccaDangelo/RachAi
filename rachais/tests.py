@@ -23,18 +23,29 @@ class E2EFullFlowTests(StaticLiveServerTestCase):
         cls._tmp_profile = tempfile.mkdtemp(prefix="chrome-prof-")
 
         opts = webdriver.ChromeOptions()
+
+        in_ci = os.environ.get("CI") == "true" or os.environ.get("GITHUB_ACTIONS") == "true"
+
+        if in_ci:
+            opts.add_argument("--headless=new")
+        else:
+            pass
+
         opts.add_argument(f"--user-data-dir={cls._tmp_profile}")
-        
+
         opts.add_argument("--no-sandbox")
         opts.add_argument("--disable-dev-shm-usage")
         opts.add_argument("--disable-gpu")
         opts.add_argument("--window-size=1920,1080")
-        
-        opts.add_experimental_option("detach", True) 
+        opts.add_argument("--disable-dev-tools")
+        opts.add_argument("--disable-extensions")
+
+        if not in_ci:
+            opts.add_experimental_option("detach", True)
 
         try:
             cls.selenium = webdriver.Chrome(options=opts)
-            cls.selenium.implicitly_wait(10) 
+            cls.selenium.implicitly_wait(10)
         except Exception:
             shutil.rmtree(cls._tmp_profile, ignore_errors=True)
             raise
