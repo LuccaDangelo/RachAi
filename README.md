@@ -22,7 +22,7 @@ RachAi é um aplicativo desenvolvido para simplificar a divisão de despesas ent
 - [Screencast de Testes Automatizados (Entrega 3)](https://youtu.be/8Kbwe1w_Krs)
 - [Screencast das Novas Histórias de Usuário (Entrega 3)](https://www.youtube.com/watch?v=a_YfVmuAzR4)
 - [Link para o Teste CI/CD (Entrega 3)](https://youtu.be/Fv5gN8yQNqw)
-- [Link para o Teste CI/CD (Entrega 4)](LINK_AQUI)
+- [Link para o Teste CI/CD (Entrega 4)](https://youtu.be/7Utc-81tIHU)
 - [Documentação de Contribuição (CONTRIBUTING.md)](CONTRIBUTING.md)
 
 </details>
