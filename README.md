@@ -116,12 +116,12 @@ Essa dinâmica tornou η caça aos bugs muito mais eficiente e o desenvolvimento
 ![Bug Tracker da Sprint 4](assets/bugtracker4.png)
 
 ### Screencasts e Deployment
-- **Deployment das Novas Histórias:** [🎥 Screencast das Novas Funcionalidades (Entrega 4)](LINK_YOUTUBE_AQUI)
-- **Testes de Sistema (E2E) Automatizados:** [🎥 Screencast dos Testes Automatizados (Entrega 4)](LINK_YOUTUBE_AQUI)
+- **Deployment das Novas Histórias:** [🎥 Screencast das Novas Funcionalidades (Entrega 4)](https://youtu.be/FTJS1G_yopg)
+- **Testes de Sistema (E2E) Automatizados:** [🎥 Screencast dos Testes Automatizados (Entrega 4)](https://youtu.be/z-dD_WsVqxw)
 
 ### CI/CD com Build e Deployment Automatizado
 Pipeline alterada com adição dos testes automatizados.
-- **Screencast do Processo de Build/Deployment:** [🎥 Assista ao screencast do processo de CI/CD aqui](LINK_YOUTUBE_AQUI)
+- **Screencast do Processo de Build/Deployment:** [🎥 Assista ao screencast do processo de CI/CD aqui](https://youtu.be/7Utc-81tIHU)
 
 ### Colaboração em Par (Atualização)
 *Programação em Par (atualização-Entrega 4): Com o avanço do projeto, a programação em par foi se tornando uma prática cada vez mais natural para nós, principalmente nos momentos em que surgiam dúvidas ou problemas mais difíceis. Nessas horas, trabalhar em dupla acelerava a busca por soluções e deixava o processo menos estressante. Ao mesmo tempo, aprendemos a equilibrar: quando a tarefa exigia mais concentração, cada um seguia sozinho. Esse equilíbrio entre colaboração e autonomia fez diferença tanto na qualidade do código quanto no entrosamento do grupo. No final, sentimos que a programação em par não só ajudou a superar desafios técnicos, mas também fortaleceu a confiança entre os membros da equipe.*
